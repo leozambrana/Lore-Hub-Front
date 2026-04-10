@@ -189,24 +189,70 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
           </div>
         </article>
 
-        {/* Referência Wiki */}
+        {/* Evidências Externas / Wiki Ref */}
         {theory.wikiUrl && (
-          <a
-            href={theory.wikiUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 p-4 rounded-2xl border border-white/5 bg-zinc-950/60 hover:border-primary/30 hover:bg-primary/5 transition-all group w-fit"
-          >
-            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <ExternalLink size={14} className="text-primary" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-primary transition-colors">
-                Fonte Wiki
-              </p>
-              <p className="text-xs text-zinc-400 truncate max-w-xs">{theory.wikiUrl}</p>
-            </div>
-          </a>
+          <div className="space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500">
+              Evidências do Universo
+            </h3>
+            {theory.wikiMetadata ? (
+              <a
+                href={theory.wikiUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col md:flex-row bg-zinc-950/40 border border-white/5 rounded-3xl overflow-hidden hover:border-primary/30 transition-all shadow-2xl"
+              >
+                {theory.wikiMetadata.image && (
+                  <div className="md:w-48 h-32 relative shrink-0 overflow-hidden">
+                    <Image
+                      src={theory.wikiMetadata.image}
+                      alt={theory.wikiMetadata.title || 'Preview'}
+                      fill
+                      className="object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                )}
+                <div className="p-5 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <ExternalLink size={12} className="text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80">
+                      Wiki Oficial
+                    </span>
+                  </div>
+                  <h4 className="text-white font-bold text-sm mb-1 truncate group-hover:text-primary transition-colors">
+                    {theory.wikiMetadata.title || theory.wikiUrl}
+                  </h4>
+                  {theory.wikiMetadata.description && (
+                    <p className="text-zinc-500 text-xs leading-relaxed line-clamp-2 italic">
+                      {theory.wikiMetadata.description}
+                    </p>
+                  )}
+                  <p className="text-zinc-700 text-[10px] mt-2 truncate font-mono">
+                    {theory.wikiUrl}
+                  </p>
+                </div>
+              </a>
+            ) : (
+              <a
+                href={theory.wikiUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 rounded-2xl border border-white/5 bg-zinc-950/60 hover:border-primary/30 hover:bg-primary/5 transition-all group w-fit"
+              >
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <ExternalLink size={14} className="text-primary" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-primary transition-colors">
+                    Fonte Wiki
+                  </p>
+                  <p className="text-xs text-zinc-400 truncate max-w-xs">
+                    {theory.wikiUrl}
+                  </p>
+                </div>
+              </a>
+            )}
+          </div>
         )}
 
         {/* Barra de votos */}

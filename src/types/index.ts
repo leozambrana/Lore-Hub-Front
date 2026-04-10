@@ -1,5 +1,3 @@
-export type VoteType = 'UP' | 'DOWN';
-
 export interface User {
   id: string;
   email: string;
@@ -22,12 +20,19 @@ export interface Game {
   };
 }
 
+export interface WikiMetadata {
+  title: string | null;
+  image: string | null;
+  description: string | null;
+  url: string;
+}
+
 export interface Theory {
   id: string;
   title: string;
   content: string;
   wikiUrl?: string | null;
-  wikiMetadata?: unknown | null;
+  wikiMetadata?: WikiMetadata | null;
   upvotes: number;
   gameId: string;
   userId: string;

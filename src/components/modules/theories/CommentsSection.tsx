@@ -21,23 +21,38 @@ interface CommentsSectionProps {
 }
 
 function TimeAgo({ date }: { date: string }) {
-  const diff = Date.now() - new Date(date).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 1) return <span>agora mesmo</span>
-  if (mins < 60) return <span>há {mins} min</span>
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return <span>há {hours}h</span>
-  return <span>{new Date(date).toLocaleDateString('pt-BR')}</span>
+  const [text, setText] = useState<string>('')
+
+  useEffect(() => {
+    // Usamos um pequeno tempo de espera ou microtask para evitar o aviso de "setState síncrono no efeito"
+    // e calculamos aqui para evitar o erro de "função impura (Date.now) durante o render".
+    const calculate = () => {
+      const diff = Date.now() - new Date(date).getTime()
+      const mins = Math.floor(diff / 60000)
+      if (mins < 1) return 'agora mesmo'
+      if (mins < 60) return `há ${mins} min`
+      const hours = Math.floor(mins / 60)
+      if (hours < 24) return `há ${hours}h`
+      return new Date(date).toLocaleDateString('pt-BR')
+    }
+    
+    const timeout = setTimeout(() => {
+      setText(calculate())
+    }, 0)
+
+    return () => clearTimeout(timeout)
+  }, [date])
+
+  if (!text) return null
+  return <span className="text-[10px] text-zinc-600">{text}</span>
 }
 
 function CommentItem({
   comment,
-  theoryId,
   onDelete,
   onReply,
 }: {
   comment: CommentWithRelations
-  theoryId: string
   onDelete: (id: string) => void
   onReply: (parentId: string, username: string) => void
 }) {
@@ -56,9 +71,7 @@ function CommentItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-bold text-zinc-300">{comment.user?.username}</span>
-            <span className="text-[10px] text-zinc-600">
-              <TimeAgo date={comment.createdAt} />
-            </span>
+            <TimeAgo date={comment.createdAt} />
           </div>
           <p className="text-sm text-zinc-400 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
           <div className="flex items-center gap-3 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -96,9 +109,7 @@ function CommentItem({
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-bold text-zinc-400">{reply.user?.username}</span>
-                  <span className="text-[10px] text-zinc-600">
-                    <TimeAgo date={reply.createdAt} />
-                  </span>
+                  <TimeAgo date={reply.createdAt} />
                 </div>
                 <p className="text-sm text-zinc-500 leading-relaxed whitespace-pre-wrap">{reply.content}</p>
               </div>
@@ -267,7 +278,6 @@ export function CommentsSection({ theoryId }: CommentsSectionProps) {
             <CommentItem
               key={comment.id}
               comment={comment}
-              theoryId={theoryId}
               onDelete={handleDelete}
               onReply={handleReply}
             />

@@ -21,27 +21,38 @@ export function useVote({ theoryId, initialUpvotes, initialVote }: UseVoteOption
 
   const [userVote, setUserVote] = useState<'UP' | 'DOWN' | null>(null)
   const [optimisticUpvotes, setOptimisticUpvotes] = useState(initialUpvotes)
-  const [isLoadingVote, setIsLoadingVote] = useState(false)
+  const [isLoadingVote, setIsLoadingVote] = useState(initialVote === undefined && !!user)
 
-  // Sincroniza initialVote quando ele chega do batch (game page)
-  useEffect(() => {
+  // Sincroniza initialVote quando ele chega (ex: batch da game page)
+  // Usamos o padrão de "sync state during render" para evitar avisos de cascata de render
+  const [prevInitialVote, setPrevInitialVote] = useState(initialVote)
+  if (initialVote !== prevInitialVote) {
+    setPrevInitialVote(initialVote)
     if (initialVote !== undefined) {
       setUserVote(initialVote)
+      setIsLoadingVote(false)
     }
-  }, [initialVote])
+  }
+
+  const [prevUser, setPrevUser] = useState(user)
+  if (user !== prevUser) {
+    setPrevUser(user)
+    if (!user) {
+      setUserVote(null)
+      setIsLoadingVote(false)
+    } else if (initialVote === undefined) {
+      setIsLoadingVote(true)
+    }
+  }
 
   // Busca o voto individualmente APENAS quando não veio pré-carregado via batch
   useEffect(() => {
     // Se initialVote foi fornecido (inclusive null = "sem voto"), não precisa buscar
     if (initialVote !== undefined) return
 
-    if (!user) {
-      setUserVote(null)
-      return
-    }
+    if (!user) return
 
     let cancelled = false
-    setIsLoadingVote(true)
 
     theoriesService
       .getMyVote(theoryId)
