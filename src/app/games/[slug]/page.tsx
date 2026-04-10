@@ -1,12 +1,13 @@
 import { gamesService } from "@/services/games.service";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { TheoryCard } from "@/components/modules/theories/TheoryCard";
+import { TheoryListWithVotes } from "@/components/modules/theories/TheoryListWithVotes";
+import { BackButton } from "@/components/shared/BackButton";
+import { GAME_FALLBACK_IMAGE } from "@/constants/images";
 
 interface GameDetailsPageProps {
   params: Promise<{ slug: string }>
@@ -25,7 +26,7 @@ export default async function GameDetailsPage({ params }: GameDetailsPageProps) 
       {/* Game Banner */}
       <section className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
         <Image
-          src={game.imageUrl || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'}
+          src={game.imageUrl || GAME_FALLBACK_IMAGE}
           alt={game.title}
           fill
           className="object-cover opacity-40 grayscale-[0.5]"
@@ -34,12 +35,7 @@ export default async function GameDetailsPage({ params }: GameDetailsPageProps) 
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/80 to-transparent" />
         
         <div className="container px-6 mx-auto relative h-full flex flex-col justify-end pb-12">
-          <Link href="/" className="mb-6 flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
-             <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/20 group-hover:text-primary transition-all">
-                <ArrowLeft size={16} />
-             </div>
-             <span className="text-xs font-bold uppercase tracking-widest">Voltar para a Exploração</span>
-          </Link>
+          <BackButton label="Voltar para a Exploração" />
           <div className="space-y-4">
              <Badge className="bg-primary/20 text-primary border-primary/30 hover:bg-primary/30 font-bold uppercase tracking-widest text-[10px] px-3 py-1 rounded-full">
                 Franquia Oficial
@@ -63,17 +59,7 @@ export default async function GameDetailsPage({ params }: GameDetailsPageProps) 
                     </h2>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6">
-                   {game.theories?.map((theory) => (
-                      <TheoryCard key={theory.id} theory={theory} gameId={game.id} />
-                   ))}
-
-                   {(!game.theories || game.theories.length === 0) && (
-                      <div className="py-20 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-3xl">
-                         <p className="text-zinc-600 font-bold uppercase tracking-[0.2em] text-sm">Ainda não há lendas registradas para este mundo.</p>
-                      </div>
-                   )}
-                </div>
+                <TheoryListWithVotes theories={game.theories || []} />
             </div>
 
             {/* Right Sidebar: Activity / Meta */}

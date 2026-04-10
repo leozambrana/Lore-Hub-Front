@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquare, ThumbsUp, ExternalLink, Edit2, Trash2 } from "lucide-react"
+import { MessageSquare, ThumbsUp, ThumbsDown, ExternalLink, Edit2, Trash2 } from "lucide-react"
 import { useLoreStore } from "@/store/useLoreStore"
+import { useVote } from "@/hooks/useVote"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,14 +18,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import api from "@/lib/axios"
+import axios from "axios"
+import { theoriesService } from "@/services/theories.service"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Theory } from "@/types"
 
 import Link from "next/link"
 
-export function TheoryCard({ theory, gameId }: { theory: Theory, gameId: string }) {
+export function TheoryCard({ theory, initialVote }: { theory: Theory; initialVote?: 'UP' | 'DOWN' | null }) {
   const { user } = useLoreStore()
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
@@ -32,16 +34,26 @@ export function TheoryCard({ theory, gameId }: { theory: Theory, gameId: string 
 
   const isOwnerOrAdmin = user && (user.id === theory.userId || user.role === 'ADMIN')
 
+  const { userVote, optimisticUpvotes, handleVote } = useVote({
+    theoryId: theory.id,
+    initialUpvotes: theory.upvotes,
+    initialVote,
+  })
+
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault()
     setIsDeleting(true)
     try {
-      await api.delete(`/theories/${theory.id}`)
+      await theoriesService.deleteTheory(theory.id)
       toast.success("Teoria removida irreversivelmente!")
       setIsAlertOpen(false)
       router.refresh()
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Erro ao remover a teoria.")
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Erro ao remover a teoria.")
+      } else {
+        toast.error("Erro inesperado.")
+      }
       setIsAlertOpen(false)
     } finally {
       setIsDeleting(false)
@@ -52,10 +64,12 @@ export function TheoryCard({ theory, gameId }: { theory: Theory, gameId: string 
     <Card className="border-white/5 bg-zinc-950/40 backdrop-blur-xl hover:border-primary/30 transition-all group overflow-hidden">
       <CardHeader className="p-6">
         <div className="flex items-start justify-between">
-          <CardTitle className="text-xl font-bold text-white group-hover:text-primary transition-colors cursor-pointer leading-tight">
-            {theory.title}
-          </CardTitle>
-          <div className="flex items-center gap-2">
+          <Link href={`/theories/${theory.id}`} className="flex-1 mr-3">
+            <CardTitle className="text-xl font-bold text-white group-hover:text-primary transition-colors cursor-pointer leading-tight">
+              {theory.title}
+            </CardTitle>
+          </Link>
+          <div className="flex items-center gap-2 shrink-0">
             {isOwnerOrAdmin && (
               <>
                 <Link href={`/theories/edit/${theory.id}`} passHref>
@@ -98,11 +112,20 @@ export function TheoryCard({ theory, gameId }: { theory: Theory, gameId: string 
       </CardHeader>
       <CardContent className="px-6 pb-6 pt-0 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors cursor-pointer">
-            <ThumbsUp size={14} className="text-primary/70" />
-            <span className="text-xs font-bold">{theory.upvotes}</span>
+          <div 
+            onClick={() => handleVote('UP')}
+            className={`flex items-center gap-1.5 transition-colors cursor-pointer ${userVote === 'UP' ? 'text-primary' : 'text-zinc-500 hover:text-white'}`}
+          >
+            <ThumbsUp size={14} className={userVote === 'UP' ? "fill-primary" : ""} />
           </div>
-          <div className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors cursor-pointer">
+          <span className="text-xs font-bold text-zinc-400">{optimisticUpvotes}</span>
+          <div 
+            onClick={() => handleVote('DOWN')}
+            className={`flex items-center gap-1.5 transition-colors cursor-pointer ${userVote === 'DOWN' ? 'text-red-500' : 'text-zinc-500 hover:text-white'}`}
+          >
+            <ThumbsDown size={14} className={userVote === 'DOWN' ? "fill-red-500" : ""} />
+          </div>
+          <div className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors cursor-pointer ml-2 border-l border-white/10 pl-4">
             <MessageSquare size={14} className="text-primary/70" />
             <span className="text-xs font-bold">0</span>
           </div>

@@ -2,11 +2,12 @@ import api from '@/lib/axios'
 import { Game } from '@/types'
 
 export const gamesService = {
-  async getAllGames(page: number = 1, limit: number = 10): Promise<{ data: Game[]; total: number }> {
-    const { data } = await api.get<{ data: Game[]; total: number }>('/games', {
+  async getAllGames(page: number = 1, limit: number = 10, search?: string): Promise<{ data: Game[]; total: number; page: number; lastPage: number }> {
+    const { data } = await api.get('/games', {
       params: {
         page,
         limit,
+        search: search || undefined
       },
     })
     return data
@@ -19,6 +20,11 @@ export const gamesService = {
 
   async approveGame(id: string): Promise<Game> {
     const { data } = await api.patch<Game>(`/games/${id}/approve`)
+    return data
+  },
+
+  async createGame(payload: Partial<Game>): Promise<Game> {
+    const { data } = await api.post<Game>('/games', payload)
     return data
   },
 

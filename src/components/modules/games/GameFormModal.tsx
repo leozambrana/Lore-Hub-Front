@@ -6,10 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import api from '@/lib/axios'
+import axios from 'axios'
 import { toast } from 'sonner'
 import { Loader2, Plus, Pencil } from 'lucide-react'
 import { Game } from '@/types'
+import { gamesService } from '@/services/games.service'
 
 import {
   Dialog,
@@ -28,7 +29,7 @@ import { ImageDragger } from '@/components/ui/image-dragger'
 const formSchema = z.object({
   title: z.string().min(3, 'Mínimo 3 caracteres'),
   slug: z.string().min(3, 'Mínimo 3 caracteres'),
-  image: z.any().optional(),
+  image: z.unknown().optional(),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -111,17 +112,21 @@ export function GameFormModal({ game }: GameFormModalProps) {
       }
 
       if (isEdit) {
-        await api.patch(`/games/${game.id}`, payload)
+        await gamesService.updateGame(game.id, payload)
         toast.success('Franquia atualizada!')
       } else {
-        await api.post('/games', payload)
+        await gamesService.createGame(payload)
         toast.success('Franquia criada!')
       }
 
       queryClient.invalidateQueries({ queryKey: ['games'] })
       setOpen(false)
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Erro ao salvar franquia')
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || 'Erro ao salvar franquia')
+      } else {
+        toast.error('Erro inesperado.')
+      }
     } finally {
       setLoading(false)
     }

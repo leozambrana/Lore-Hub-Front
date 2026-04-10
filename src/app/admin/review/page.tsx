@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { GAME_FALLBACK_IMAGE } from '@/constants/images'
 
 export default function AdminReviewPage() {
   const queryClient = useQueryClient()
@@ -59,7 +60,7 @@ export default function AdminReviewPage() {
           <Card key={game.id} className="border-white/5 bg-zinc-950/40 backdrop-blur-xl overflow-hidden group">
             <div className="relative aspect-video">
               <Image
-                src={game.imageUrl || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'}
+                src={game.imageUrl || GAME_FALLBACK_IMAGE}
                 alt={game.title}
                 fill
                 className="object-cover transition-opacity group-hover:opacity-60"

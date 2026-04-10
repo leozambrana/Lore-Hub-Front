@@ -17,6 +17,9 @@ export interface Game {
   status: 'PENDING' | 'APPROVED';
   theories?: Theory[];
   createdAt: string;
+  stats?: {
+    theories: number;
+  };
 }
 
 export interface Theory {
@@ -31,6 +34,10 @@ export interface Theory {
   game?: Game;
   user?: User;
   createdAt: string;
+  _count?: {
+    comments?: number;
+    votes?: number;
+  };
 }
 
 export interface Comment {
@@ -40,4 +47,10 @@ export interface Comment {
   userId: string;
   parentId?: string | null;
   createdAt: string;
+  user?: {
+    id: string;
+    username: string;
+    avatarUrl: string | null;
+  };
+  replies?: Comment[];
 }

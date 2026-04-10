@@ -1,45 +1,60 @@
 import { gamesService } from "@/services/games.service";
-import { GameList } from "@/components/modules/games/GameList";
-import { Compass, Trophy, Users } from "lucide-react";
+import { HomeFeed } from "@/components/modules/home/HomeFeed";
+import { SidebarWidget } from "@/components/modules/home/SidebarWidget";
+import { GamesCarousel } from "@/components/modules/home/GamesCarousel";
+import { theoriesService } from "@/services/theories.service";
+
+async function fetchStats() {
+  try {
+    const stats = await theoriesService.getSystemStats();
+    return stats;
+  } catch {
+    return { totalTheories: 0, totalGames: 0, topTheorists: [] };
+  }
+}
 
 export default async function Home() {
-  const { data: games } = await gamesService.getAllGames(1, 100);
+  const { data: games } = await gamesService.getAllGames(1, 10);
+  console.log('games', games);
+  const stats = await fetchStats();
 
   return (
     <main className="flex-1 flex flex-col items-center">
-      {/* Hero Section */}
-      <section className="w-full relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
+      {/* Hero Section Slim */}
+      <section className="w-full relative pt-16 pb-12 overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
         
-        <div className="container px-6 mx-auto relative z-10">
-          <div className="flex flex-col items-center text-center space-y-6 max-w-4xl mx-auto">
-            <h2 className="text-6xl md:text-8xl font-black italic tracking-tighter text-white uppercase leading-none drop-shadow-2xl">
-               Explorar a <span className="text-primary not-italic">Lore</span>
-            </h2>
-            <p className="text-zinc-500 text-lg md:text-xl font-medium max-w-2xl">
-               Descubra os mistérios escondidos, compartilhe suas teorias e mergulhe no conhecimento profundo dos seus universos favoritos.
-            </p>
-            
-            <div className="flex flex-wrap items-center justify-center gap-8 pt-8 opacity-60">
-                <div className="flex items-center gap-2">
-                    <Trophy size={18} className="text-primary" />
-                    <span className="text-xs uppercase font-bold tracking-widest text-white">800+ Teorias</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Compass size={18} className="text-primary" />
-                    <span className="text-xs uppercase font-bold tracking-widest text-white">25+ Franquias</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Users size={18} className="text-primary" />
-                    <span className="text-xs uppercase font-bold tracking-widest text-white">Comunidade Ativa</span>
-                </div>
-            </div>
+        <div className="container px-6 mx-auto relative z-10 flex flex-col items-center">
+          <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-white uppercase leading-none drop-shadow-2xl mb-4">
+              Lore<span className="text-primary not-italic">Hub</span>
+          </h2>
+          <p className="text-zinc-400 text-base md:text-lg font-medium max-w-lg text-center mx-auto mb-10">
+              Pense alto. Conecte os pontos. Compartilhe suas teorias na maior base de dados de lore dos games.
+          </p>
+
+          {/* Destaques (Games Horizontal Row) */}
+          <div className="w-full max-w-7xl mx-auto px-4 mt-8 mb-2">
+            <GamesCarousel games={games} />
           </div>
         </div>
       </section>
 
-      {/* Grid listing (Client Component with Server Hydration) */}
-      <GameList initialData={games} />
+      {/* Grid Principal */}
+      <section className="w-full max-w-7xl mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          
+          {/* Coluna Main: Fluxo de Teorias (75%) */}
+          <div className="lg:col-span-3">
+             <HomeFeed />
+          </div>
+          
+          {/* Coluna Lateral: Status e Top Users (25%) */}
+          <div className="lg:col-span-1 hidden lg:block">
+             <SidebarWidget stats={stats} />
+          </div>
+
+        </div>
+      </section>
       
       {/* Footer minimal */}
       <footer className="w-full py-10 text-center text-[10px] text-zinc-800 font-bold uppercase tracking-[0.5em] border-t border-white/5 mt-auto">

@@ -5,10 +5,8 @@ import { useRouter, usePathname } from 'next/navigation'
 import { PlusCircle, Search, Compass, LogIn, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState } from 'react'
-import api from '@/lib/axios'
-import { User } from '@/types'
-
+import { useEffect, useState, useRef } from 'react'
+import { usersService } from '@/services/users.service'
 import { useLoreStore } from '@/store/useLoreStore'
 import {
   DropdownMenu,
@@ -28,13 +26,16 @@ export function Header() {
   const isTheoryPage = pathname?.startsWith('/theories/new') || pathname?.startsWith('/theories/edit')
   const { user, setUser } = useLoreStore()
   const [loading, setLoading] = useState(true)
+  const isFetchingRef = useRef(false)
 
   const fetchProfile = async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
     try {
       const { data: authData } = await supabase.auth.getUser()
       if (authData.user) {
-        const { data: profile } = await api.get<User>('/users/me')
-        setUser(profile) // Seta no Store Global
+        const profile = await usersService.getMe()
+        setUser(profile)
       } else {
         setUser(null)
       }
@@ -42,6 +43,7 @@ export function Header() {
       console.error('Erro ao buscar perfil:', error)
       setUser(null)
     } finally {
+      isFetchingRef.current = false;
       setLoading(false)
     }
   }
@@ -79,7 +81,7 @@ export function Header() {
 
           <nav className="hidden md:flex items-center gap-8">
             <Link 
-              href="/" 
+              href="/explorar" 
               className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
             >
               <Compass size={14} className="inline mr-2 -mt-1 text-primary" /> Explorar

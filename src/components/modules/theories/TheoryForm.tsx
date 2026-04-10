@@ -8,8 +8,9 @@ import * as z from 'zod'
 import TextareaAutosize from 'react-textarea-autosize'
 import { Theory } from '@/types'
 import { useLoreStore } from '@/store/useLoreStore'
-import api from '@/lib/axios'
+import axios from 'axios'
 import { gamesService } from '@/services/games.service'
+import { theoriesService } from '@/services/theories.service'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -30,9 +31,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-import { ArrowLeft, Check, ChevronsUpDown, Loader2, Save } from 'lucide-react'
+import { Check, ChevronsUpDown, Loader2, Save } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import Link from 'next/link'
+import { BackButton } from '@/components/shared/BackButton'
 
 const formSchema = z.object({
   title: z.string().min(3, 'Sua teoria precisa de um título de respeito!'),
@@ -65,7 +66,6 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
     register,
     handleSubmit,
     setValue,
-    watch,
     control,
     formState: { errors, isDirty },
   } = useForm<FormValues>({
@@ -94,10 +94,10 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
     setIsSaving(true)
     try {
       if (isEditing) {
-        await api.patch(`/theories/${initialData.id}`, values)
+        await theoriesService.updateTheory(initialData.id, values)
         toast.success('Alterações da sua teoria foram salvas com sucesso!')
       } else {
-        await api.post('/theories', values)
+        await theoriesService.createTheory(values)
         toast.success('Teoria publicada eternamente na wiki!')
       }
 
@@ -107,8 +107,12 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
       // Voltar para a frânquia com pre-reload
       router.push(`/games/${games.find(g => g.id === values.gameId)?.slug || ''}`)
       router.refresh()
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Erro ao publicar.')
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || 'Erro ao publicar.')
+      } else {
+        toast.error('Erro inesperado.')
+      }
     } finally {
       setIsSaving(false)
     }
@@ -130,12 +134,7 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
       {/* Top Navbar fixo */}
       <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-zinc-950/80 backdrop-blur-xl">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
-             <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/20 group-hover:text-primary transition-all">
-                <ArrowLeft size={16} />
-             </div>
-             <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline-block">Voltar ou Cancelar</span>
-          </Link>
+          <BackButton label="Voltar ou Cancelar" />
           
           <div className="flex items-center gap-4">
             {isDirty && <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Não salvo</span>}
@@ -178,7 +177,7 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                      </Button>
                    </PopoverTrigger>
-                   <PopoverContent className="w-[280px] p-0 border-white/10 bg-zinc-950 rounded-xl">
+                   <PopoverContent className="w-70 p-0 border-white/10 bg-zinc-950 rounded-xl">
                      <Command className="bg-transparent text-white">
                        <CommandInput placeholder="Buscar jogos..." />
                        <CommandList>

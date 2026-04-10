@@ -8,7 +8,7 @@ export default async function EditTheoryPage({ params }: { params: Promise<{ id:
   let theory
   try {
     theory = await theoriesService.getTheoryById(id)
-  } catch (error) {
+  } catch {
     notFound()
   }
 
