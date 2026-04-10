@@ -4,6 +4,9 @@ import { SidebarWidget } from "@/components/modules/home/SidebarWidget";
 import { GamesCarousel } from "@/components/modules/home/GamesCarousel";
 import { theoriesService } from "@/services/theories.service";
 
+export const dynamic = 'force-dynamic';
+
+
 async function fetchStats() {
   try {
     const stats = await theoriesService.getSystemStats();

@@ -1,6 +1,9 @@
 import { gamesService } from "@/services/games.service";
 import { ExploreHub } from "@/components/modules/games/ExploreHub";
 
+export const dynamic = 'force-dynamic';
+
+
 export default async function ExplorarPage() {
   const initialData = await gamesService.getAllGames(1, 12);
 
