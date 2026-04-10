@@ -18,6 +18,9 @@ export interface Game {
   stats?: {
     theories: number;
   };
+  _count?: {
+    theories?: number;
+  };
 }
 
 export interface WikiMetadata {
