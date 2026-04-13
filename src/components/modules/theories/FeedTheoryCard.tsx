@@ -2,7 +2,7 @@ import { Theory } from "@/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ThumbsUp, MessageSquare } from "lucide-react"
+import { Heart, MessageSquare } from "lucide-react"
 import Link from "next/link"
 
 export function FeedTheoryCard({ theory }: { theory: Theory }) {
@@ -42,8 +42,8 @@ export function FeedTheoryCard({ theory }: { theory: Theory }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors cursor-pointer">
-              <ThumbsUp size={14} className={theory.upvotes > 0 ? "text-primary/70" : ""} />
+            <div className="flex items-center gap-1.5 text-red-500 hover:text-red-400 transition-colors cursor-pointer">
+              <Heart size={14} className="fill-red-500" />
               <span className="text-xs font-bold">{theory.upvotes}</span>
             </div>
             <div className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors cursor-pointer">

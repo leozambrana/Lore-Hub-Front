@@ -28,6 +28,8 @@ import {
   Trash2,
   Calendar,
   MessageSquare,
+  Heart,
+  Library,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -88,7 +90,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
           priority
         />
         {/* Gradiente forte para preto na base */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/10" />
+        <div className="absolute inset-0 bg-linear-to-t from-black via-black/70 to-black/10" />
 
         {/* Conteúdo do hero: breadcrumb no topo, título + autor na base */}
         <div className="container max-w-4xl mx-auto px-6 relative h-full flex flex-col justify-between py-8">
@@ -184,10 +186,46 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
 
         {/* Corpo da teoria */}
         <article className="prose prose-invert prose-sm max-w-none overflow-hidden">
-          <div className="text-zinc-300 text-base leading-[1.9] font-medium whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
+          <div className="text-zinc-300 text-base leading-[1.9] font-medium whitespace-pre-wrap wrap-anywhere">
             {theory.content}
           </div>
         </article>
+
+        {/* Entidades da Wiki Mencionadas */}
+        {theory.wikiReferences && theory.wikiReferences.length > 0 && (
+          <div className="space-y-6 pt-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
+              <Library size={12} className="text-primary" />
+              Entidades Mentions
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {theory.wikiReferences.map((ref) => (
+                <Link 
+                  key={ref.wikiItemId} 
+                  href={`/wiki/${ref.wikiItemId}`}
+                  className="flex items-center gap-3 p-3 bg-zinc-950/40 border border-white/5 rounded-2xl hover:border-primary/30 hover:bg-white/5 transition-all group"
+                >
+                  <div className="relative h-12 w-12 rounded-xl overflow-hidden shrink-0 border border-white/10 bg-zinc-900">
+                    <Image
+                      src={ref.wikiItem.imageUrl || '/images/wiki-fallback.jpg'}
+                      alt={ref.wikiItem.name}
+                      fill
+                      className="object-cover grayscale group-hover:grayscale-0 transition-all"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-white truncate group-hover:text-primary transition-colors">
+                      {ref.wikiItem.name}
+                    </p>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600">
+                      {ref.wikiItem.category}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Evidências Externas / Wiki Ref */}
         {theory.wikiUrl && (
@@ -263,29 +301,34 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => handleVote('UP')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all font-bold text-sm ${
+              className={`flex items-center justify-center w-12 h-10 rounded-xl border transition-all ${
                 userVote === 'UP'
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-white/10 bg-white/5 text-zinc-400 hover:border-primary/50 hover:text-primary hover:bg-primary/5'
+                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-500'
+                  : 'border-white/10 bg-white/5 text-zinc-400 hover:border-emerald-500/50 hover:text-emerald-500 hover:bg-emerald-500/5'
               }`}
             >
-              <ThumbsUp size={15} className={userVote === 'UP' ? 'fill-primary' : ''} />
-              {optimisticUpvotes > 0 && <span>{optimisticUpvotes}</span>}
+              <ThumbsUp size={16} className={userVote === 'UP' ? 'fill-emerald-500' : ''} />
             </button>
             <button
               onClick={() => handleVote('DOWN')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all font-bold text-sm ${
+              className={`flex items-center justify-center w-12 h-10 rounded-xl border transition-all ${
                 userVote === 'DOWN'
                   ? 'border-red-500 bg-red-500/10 text-red-400'
                   : 'border-white/10 bg-white/5 text-zinc-400 hover:border-red-500/50 hover:text-red-400 hover:bg-red-500/5'
               }`}
             >
-              <ThumbsDown size={15} className={userVote === 'DOWN' ? 'fill-red-500' : ''} />
+              <ThumbsDown size={16} className={userVote === 'DOWN' ? 'fill-red-500' : ''} />
             </button>
           </div>
-          <div className="ml-auto flex items-center gap-2 text-zinc-600">
-            <MessageSquare size={14} />
-            <span className="text-xs font-bold">{theory._count?.comments || 0} comentários</span>
+          <div className="ml-auto flex items-center gap-6">
+            <div className={`flex items-center gap-2 text-red-500 transition-colors`}>
+              <Heart size={16} className="fill-red-500" />
+              <span className="text-xs font-black">{optimisticUpvotes}</span>
+            </div>
+            <div className="flex items-center gap-2 text-zinc-600">
+              <MessageSquare size={16} />
+              <span className="text-xs font-black">{theory._count?.comments || 0}</span>
+            </div>
           </div>
         </div>
 

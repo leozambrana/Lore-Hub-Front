@@ -35,7 +35,7 @@ export function GamesCarousel({ games }: { games: Game[] }) {
                   {/* Badge */}
                   <div className="absolute top-3 right-3 z-10">
                      <Badge variant="outline" className="bg-zinc-950/80 backdrop-blur-md text-white border-white/10 hover:bg-zinc-950 text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 whitespace-nowrap">
-                        {game._count?.theories || 0} Teorias
+                        {game.stats?.theories || 0} Teorias
                      </Badge>
                   </div>
 

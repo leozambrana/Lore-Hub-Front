@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquare, ThumbsUp, ThumbsDown, ExternalLink, Edit2, Trash2 } from "lucide-react"
+import { MessageSquare, ThumbsUp, ThumbsDown, ExternalLink, Edit2, Trash2, Heart } from "lucide-react"
 import { useLoreStore } from "@/store/useLoreStore"
 import { useVote } from "@/hooks/useVote"
 import {
@@ -111,23 +111,31 @@ export function TheoryCard({ theory, initialVote }: { theory: Theory; initialVot
         </CardDescription>
       </CardHeader>
       <CardContent className="px-6 pb-6 pt-0 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div 
-            onClick={() => handleVote('UP')}
-            className={`flex items-center gap-1.5 transition-colors cursor-pointer ${userVote === 'UP' ? 'text-primary' : 'text-zinc-500 hover:text-white'}`}
-          >
-            <ThumbsUp size={14} className={userVote === 'UP' ? "fill-primary" : ""} />
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div 
+              onClick={() => handleVote('UP')}
+              className={`transition-colors cursor-pointer ${userVote === 'UP' ? 'text-emerald-500' : 'text-zinc-500 hover:text-emerald-500'}`}
+            >
+              <ThumbsUp size={14} className={userVote === 'UP' ? "fill-emerald-500" : ""} />
+            </div>
+            <div 
+              onClick={() => handleVote('DOWN')}
+              className={`transition-colors cursor-pointer ${userVote === 'DOWN' ? 'text-red-500' : 'text-zinc-500 hover:text-white'}`}
+            >
+              <ThumbsDown size={14} className={userVote === 'DOWN' ? "fill-red-500" : ""} />
+            </div>
           </div>
-          <span className="text-xs font-bold text-zinc-400">{optimisticUpvotes}</span>
-          <div 
-            onClick={() => handleVote('DOWN')}
-            className={`flex items-center gap-1.5 transition-colors cursor-pointer ${userVote === 'DOWN' ? 'text-red-500' : 'text-zinc-500 hover:text-white'}`}
-          >
-            <ThumbsDown size={14} className={userVote === 'DOWN' ? "fill-red-500" : ""} />
-          </div>
-          <div className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors cursor-pointer ml-2 border-l border-white/10 pl-4">
-            <MessageSquare size={14} className="text-primary/70" />
-            <span className="text-xs font-bold">0</span>
+          
+          <div className="flex items-center gap-4 border-l border-white/10 pl-4 ml-2">
+            <div className="flex items-center gap-1.5 text-red-500">
+              <Heart size={14} className="fill-red-500" />
+              <span className="text-xs font-bold">{optimisticUpvotes}</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-zinc-500">
+              <MessageSquare size={14} />
+              <span className="text-xs font-bold">{theory._count?.comments || 0}</span>
+            </div>
           </div>
         </div>
         

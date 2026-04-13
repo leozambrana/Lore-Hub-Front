@@ -13,7 +13,7 @@ import { GameFormModal } from './GameFormModal'
 import { useQuery } from '@tanstack/react-query'
 import { gamesService } from '@/services/games.service'
 import { useEffect } from 'react'
-import { Skeleton } from "@/components/ui/skeleton"
+import { CardGridSkeleton } from '@/components/shared/SkeletonTemplates'
 
 import { GAME_FALLBACK_IMAGE } from '@/constants/images'
 
@@ -69,11 +69,7 @@ export function ExploreHub({ initialData }: ExploreHubProps) {
 
       {/* Grid de Franquias */}
       {isFetching ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-4/3 rounded-2xl bg-white/5 border border-white/5" />
-          ))}
-        </div>
+        <CardGridSkeleton count={12} className="grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" />
       ) : filteredGames.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredGames.map(game => (

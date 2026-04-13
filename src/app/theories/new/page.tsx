@@ -1,7 +1,7 @@
 import { TheoryForm } from '@/components/modules/theories/TheoryForm'
 
 export const metadata = {
-  title: 'Forjar Nova Lenda | LoreHub',
+  title: 'Nova Teoria | LoreHub',
 }
 
 export default async function NewTheoryPage({

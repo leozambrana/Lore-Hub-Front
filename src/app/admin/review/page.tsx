@@ -46,7 +46,7 @@ export default function AdminReviewPage() {
             Painel Administrativo
           </Badge>
           <h1 className="text-4xl font-black italic tracking-tighter text-white uppercase leading-none">
-             Revisão de <span className="text-primary not-italic">Lendas</span>
+             Revisão de <span className="text-primary not-italic">Conteúdo</span>
           </h1>
         </div>
         <div className="text-right">
@@ -105,7 +105,7 @@ export default function AdminReviewPage() {
              <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 text-2xl text-zinc-700 opacity-20">
                 🛡️
              </div>
-             <p className="text-zinc-600 font-bold uppercase tracking-[0.3em] text-xs">O reino está em ordem. Nenhuma lenda pendente.</p>
+             <p className="text-zinc-600 font-bold uppercase tracking-[0.3em] text-xs">Tudo em ordem. Nenhuma nova solicitação pendente.</p>
           </div>
         )}
       </div>

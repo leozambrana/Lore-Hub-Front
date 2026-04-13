@@ -9,9 +9,9 @@ import { TheoryListWithVotes } from "@/components/modules/theories/TheoryListWit
 import { BackButton } from "@/components/shared/BackButton";
 import { GAME_FALLBACK_IMAGE } from "@/constants/images";
 
-interface GameDetailsPageProps {
-  params: Promise<{ slug: string }>
-}
+import { PageProps } from "@/types";
+
+type GameDetailsPageProps = PageProps<{ slug: string }>
 
 export default async function GameDetailsPage({ params }: GameDetailsPageProps) {
   const { slug } = await params;

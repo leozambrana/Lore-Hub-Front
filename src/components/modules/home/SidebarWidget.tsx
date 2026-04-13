@@ -46,15 +46,15 @@ export function SidebarWidget({ stats }: SidebarProps) {
       {/* System Status */}
       <div className="bg-zinc-950/40 border border-white/5 rounded-xl p-8 shadow-xl">
         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white flex items-center mb-6">
-          <Server size={14} className="mr-2 text-primary" /> Status do Core
+          <Server size={14} className="mr-2 text-primary" /> Estatísticas
         </h3>
         <div className="flex flex-col gap-4">
            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Lendas</span>
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Teorias</span>
               <span className="text-xs font-black text-white">{stats.totalTheories}</span>
            </div>
            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Mundos Forjados</span>
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Jogos Catalogados</span>
               <span className="text-xs font-black text-white">{stats.totalGames}</span>
            </div>
            <div className="flex items-center justify-between">

@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# llm text instructions 
+llm.txt
+llm-instructions.txt

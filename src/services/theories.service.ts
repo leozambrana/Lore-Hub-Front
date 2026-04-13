@@ -1,5 +1,5 @@
 import api from '@/lib/axios'
-import { Theory } from '@/types'
+import { Theory, PaginationMeta } from '@/types'
 
 export const theoriesService = {
   async getTheoryById(id: string): Promise<Theory> {
@@ -10,6 +10,25 @@ export const theoriesService = {
   async getTheoriesBySort(sort: string, limit: number = 15): Promise<Theory[]> {
     const { data } = await api.get(`/theories?sort=${sort}&limit=${limit}`)
     return data.data
+  },
+
+  async getAllTheories(
+    page: number = 1,
+    limit: number = 10,
+    gameId?: string,
+    sort: string = 'recent',
+    search: string = ''
+  ): Promise<{ data: Theory[], meta: PaginationMeta }> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      sort,
+      search,
+    })
+    if (gameId) params.append('gameId', gameId)
+
+    const { data } = await api.get(`/theories?${params.toString()}`)
+    return data
   },
 
   async createTheory(payload: Partial<Theory>): Promise<Theory> {

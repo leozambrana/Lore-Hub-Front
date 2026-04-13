@@ -19,9 +19,9 @@ export function TheoryListWithVotes({ theories }: TheoryListWithVotesProps) {
 
   if (theories.length === 0) {
     return (
-      <div className="py-20 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-3xl">
-        <p className="text-zinc-600 font-bold uppercase tracking-[0.2em] text-sm">
-          Ainda não há lendas registradas para este mundo.
+      <div className="flex flex-col items-center justify-center py-20 bg-zinc-950/20 border border-white/5 rounded-3xl border-dashed">
+        <p className="text-zinc-600 font-bold uppercase tracking-[0.3em] text-[10px] text-center px-4">
+          Ainda não há teorias registradas para este jogo.
         </p>
       </div>
     )

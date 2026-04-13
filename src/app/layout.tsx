@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LoreHub - Portal de Narradores",
-  description: "Acesse sua coleção de histórias e lendas.",
+  title: "LoreHub - Hub de Investigações e Lore",
+  description: "Sua plataforma central para discutir, validar e conectar teorias de jogos.",
 };
 
 export default function RootLayout({

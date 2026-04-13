@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FeedTheoryCard } from '../theories/FeedTheoryCard'
-import { Skeleton } from "@/components/ui/skeleton"
+import { FeedSkeleton } from '@/components/shared/SkeletonTemplates'
 import { theoriesService } from '@/services/theories.service'
 
 export function HomeFeed() {
@@ -35,11 +35,7 @@ export function HomeFeed() {
       </Tabs>
 
       {isLoading ? (
-        <div className="flex flex-col gap-4">
-           {Array.from({ length: 5 }).map((_, i) => (
-             <Skeleton key={i} className="h-36 w-full rounded-xl bg-white/5 border border-white/5" />
-           ))}
-        </div>
+        <FeedSkeleton count={5} />
       ) : (
         <div className="flex flex-col gap-4">
           {data?.map(theory => (

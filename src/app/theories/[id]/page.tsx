@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { TheoryDetailClient } from '@/components/modules/theories/TheoryDetailClient'
 
-interface TheoryPageProps {
-  params: Promise<{ id: string }>
-}
+import { PageProps } from '@/types'
+
+type TheoryPageProps = PageProps<{ id: string }>
 
 export async function generateMetadata({ params }: TheoryPageProps): Promise<Metadata> {
   try {

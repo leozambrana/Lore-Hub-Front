@@ -5,68 +5,45 @@ import { useRouter } from 'next/navigation'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import TextareaAutosize from 'react-textarea-autosize'
-import { Theory } from '@/types'
-import { useLoreStore } from '@/store/useLoreStore'
+import { Theory, TheoryFormProps } from '@/types'
 import axios from 'axios'
 import { gamesService } from '@/services/games.service'
 import { theoriesService } from '@/services/theories.service'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { wikiService } from '@/services/wiki.service'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Field, FieldLabel, FieldControl, FieldError } from '@/components/ui/field'
 
-import { Check, ChevronsUpDown, Loader2, Save } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Loader2, Save, Library, X, Info } from 'lucide-react'
 import { BackButton } from '@/components/shared/BackButton'
+import { MultiAsyncCombobox } from '@/components/shared/MultiAsyncCombobox'
+import { AsyncCombobox } from '@/components/shared/AsyncCombobox'
 
 const formSchema = z.object({
-  title: z.string().min(3, 'Sua teoria precisa de um título de respeito!'),
-  content: z.string().min(10, 'O pergaminho está muito curto. Escreva mais!'),
-  wikiUrl: z.union([z.literal(''), z.string().url('A URL inserida não é um formato de link válido.')]).optional(),
-  gameId: z.string().min(1, 'Selecione de qual franquia vem essa lenda.'),
+  title: z.string().min(3, 'Especifique um título para sua teoria.'),
+  content: z.string().min(10, 'A teoria está muito curta. Escreva mais!'),
+  wikiUrl: z.union([z.literal(''), z.string().url('A URL inserida não é um formato de link válido.')]).optional().or(z.literal('')),
+  gameId: z.string().uuid('Selecione a que jogo pertence esta teoria.'),
+  wikiItemIds: z.array(z.string()).optional().default([]),
 })
 
 type FormValues = z.infer<typeof formSchema>
 
-interface TheoryFormProps {
-  initialData?: Theory
-  preselectedGameId?: string
-}
-
 export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) {
   const router = useRouter()
-  const { user } = useLoreStore()
   const queryClient = useQueryClient()
   const [isSaving, setIsSaving] = useState(false)
   const isEditing = !!initialData
 
-  const { data: gamesData } = useQuery({
-    queryKey: ['games', 'approved'],
-    queryFn: () => gamesService.getAllGames(1, 100),
-  })
-  const games = gamesData?.data || []
-
   const {
     register,
     handleSubmit,
-    setValue,
     control,
+    watch,
     formState: { errors, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -75,15 +52,17 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
       content: initialData?.content || '',
       wikiUrl: initialData?.wikiUrl || '',
       gameId: initialData?.gameId || preselectedGameId || '',
+      wikiItemIds: initialData?.wikiReferences?.map(ref => ref.wikiItemId) || [],
     },
   })
 
-  // Prevent leaving with unsaved changes on refresh/close
+  const selectedGameId = watch('gameId')
+
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty && !isSaving) {
         e.preventDefault()
-        e.returnValue = '' // Some browsers require this
+        e.returnValue = ''
       }
     }
     window.addEventListener('beforeunload', handleBeforeUnload)
@@ -95,19 +74,16 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
     try {
       if (isEditing) {
         await theoriesService.updateTheory(initialData.id, values)
-        toast.success('Alterações da sua teoria foram salvas com sucesso!')
+        toast.success('Alterações salvas com sucesso!')
       } else {
         await theoriesService.createTheory(values)
-        toast.success('Teoria publicada eternamente na wiki!')
+        toast.success('Teoria publicada com sucesso!')
       }
 
       queryClient.invalidateQueries({ queryKey: ['theories'] })
-      queryClient.invalidateQueries({ queryKey: ['game', values.gameId] })
-
-      // Voltar para a frânquia com pre-reload
-      router.push(`/games/${games.find(g => g.id === values.gameId)?.slug || ''}`)
+      router.push(`/theories`) 
       router.refresh()
-    } catch (error) {
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || 'Erro ao publicar.')
       } else {
@@ -118,131 +94,130 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
     }
   }
 
-  useEffect(() => {
-    if (isEditing && initialData) {
-      if (!user || (user.id !== initialData.userId && user.role !== 'ADMIN')) {
-        toast.error('Você não tem permissão para editar esta teoria.')
-        router.push('/')
-      }
-    }
-  }, [user, isEditing, initialData, router])
-
-  // Removed unused selectedGameId
-
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950">
-      {/* Top Navbar fixo */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-zinc-950/80 backdrop-blur-xl">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <BackButton label="Voltar ou Cancelar" />
+    <div className="flex-1 container max-w-7xl mx-auto px-6 py-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+        <div className="space-y-4">
+          <BackButton label="Cancelar" className="mb-4" />
+          <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter text-white uppercase leading-none">
+            {isEditing ? 'Editar' : 'Criar'}
+            {' '}
+            <span className="text-primary not-italic">Teoria</span>
+          </h1>
+          <p className="text-zinc-500 max-w-xl text-sm font-medium">
+            Conecte os pontos e compartilhe suas descobertas com a comunidade.
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-zinc-950/40 p-12 rounded-[3.5rem] border border-white/5 backdrop-blur-xl transition-all hover:bg-zinc-950/50">
           
-          <div className="flex items-center gap-4">
-            {isDirty && <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Não salvo</span>}
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              disabled={isSaving}
-              className="h-10 px-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-[10px] shadow-[0_4px_20px_rgb(var(--primary)/0.3)] transition-all"
-            >
-              {isSaving ? <Loader2 className="animate-spin size-4 mr-2" /> : <Save className="size-4 mr-2" />}
-              {isSaving ? 'Salvando...' : (isEditing ? 'Salvar Lenda' : 'Publicar Lenda')}
-            </Button>
-          </div>
-        </div>
-      </header>
+          <Field error={errors.title?.message} className="md:col-span-2">
+            <FieldLabel>Título da Investigação</FieldLabel>
+            <FieldControl>
+              <Input 
+                placeholder="Ex: A verdadeira identidade de Melina..." 
+                className="h-16 bg-zinc-950/60 border-white/10 rounded-2xl focus:border-primary/50 text-white font-bold text-xl px-6"
+                {...register('title')} 
+              />
+            </FieldControl>
+            <FieldError />
+          </Field>
 
-      {/* Área de Escrita */}
-      <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-8">
-        
-        {/* Informações Auxiliares: Game Selector e WikiUrl */}
-        <div className="flex flex-col md:flex-row items-start gap-6 w-full mb-2">
-           <div className="flex flex-col gap-2 w-full md:w-1/2">
-             <Label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Franquia do Universo</Label>
-             <Controller
-               control={control}
-               name="gameId"
-               render={({ field }) => (
-                 <Popover>
-                   <PopoverTrigger asChild>
-                     <Button
-                       variant="outline"
-                       role="combobox"
-                       className={cn(
-                         "w-full justify-between border-white/10 bg-white/5 hover:bg-white/10 rounded-xl",
-                         !field.value && "text-muted-foreground"
-                       )}
-                     >
-                       {field.value
-                         ? games.find((g) => g.id === field.value)?.title
-                         : "Selecione o Jogo..."}
-                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                     </Button>
-                   </PopoverTrigger>
-                   <PopoverContent className="w-70 p-0 border-white/10 bg-zinc-950 rounded-xl">
-                     <Command className="bg-transparent text-white">
-                       <CommandInput placeholder="Buscar jogos..." />
-                       <CommandList>
-                         <CommandEmpty>Nenhum jogo encontrado.</CommandEmpty>
-                         <CommandGroup>
-                           {games.map((g) => (
-                             <CommandItem
-                               key={g.id}
-                               value={g.title}
-                               onSelect={() => {
-                                 setValue('gameId', g.id, { shouldValidate: true, shouldDirty: true })
-                               }}
-                             >
-                               <Check
-                                 className={cn(
-                                   "mr-2 h-4 w-4 text-primary",
-                                   g.id === field.value ? "opacity-100" : "opacity-0"
-                                 )}
-                               />
-                               {g.title}
-                             </CommandItem>
-                           ))}
-                         </CommandGroup>
-                       </CommandList>
-                     </Command>
-                   </PopoverContent>
-                 </Popover>
-               )}
-             />
-             {errors.gameId && <p className="text-[10px] text-destructive font-bold uppercase ml-1">{errors.gameId.message}</p>}
-          </div>
-
-          <div className="flex flex-col gap-2 w-full md:w-1/2">
-            <Label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Fonte da Wiki Oficial (Opcional)</Label>
-            <Input
-              {...register('wikiUrl')}
-              placeholder="https://wiki.fandom.com/..."
-              className="bg-white/5 border-white/10 rounded-xl focus:border-primary/50 text-white placeholder:text-zinc-600 h-9"
+          <Field error={errors.gameId?.message}>
+            <FieldLabel>Universo / Franquia</FieldLabel>
+            <Controller
+              control={control}
+              name="gameId"
+              render={({ field }) => (
+                <AsyncCombobox
+                  queryKey="games"
+                  fetchFn={(page, search) => gamesService.getAllGames(page, 10, search)}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Selecione o jogo"
+                  showClear
+                />
+              )}
             />
-            {errors.wikiUrl && <p className="text-[10px] text-destructive font-bold uppercase ml-1">{errors.wikiUrl.message}</p>}
-          </div>
+            <FieldError />
+          </Field>
+
+          <Field error={errors.wikiUrl?.message}>
+            <FieldLabel>Fonte Wiki (Opcional)</FieldLabel>
+            <FieldControl>
+              <Input 
+                placeholder="https://wiki.fextralife.com/..." 
+                className="h-14 bg-zinc-950/60 border-white/10 rounded-2xl focus:border-primary/50 text-white text-sm px-6"
+                {...register('wikiUrl')} 
+              />
+            </FieldControl>
+            <FieldError />
+          </Field>
+
+          <Field className="md:col-span-2">
+            <div className="flex items-center gap-2 ml-1 mb-1">
+              <Library size={12} className="text-primary" />
+              <FieldLabel className="ml-0">Mencionar Entidades do Hub</FieldLabel>
+            </div>
+            <Controller
+              control={control}
+              name="wikiItemIds"
+              render={({ field }) => (
+                <MultiAsyncCombobox
+                  queryKey={`wiki-items-${selectedGameId}`}
+                  fetchFn={(page, search) => wikiService.getAll({ 
+                    page, 
+                    limit: 10, 
+                    gameId: selectedGameId || undefined, 
+                    search 
+                  })}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder={selectedGameId ? "Mencione personagens, itens ou locais catalogados..." : "Selecione um jogo primeiro..."}
+                />
+              )}
+            />
+            {!selectedGameId && (
+              <div className="flex items-center gap-2 p-4 bg-primary/5 border border-primary/10 rounded-2xl text-[10px] text-primary/80 uppercase font-black tracking-widest mt-2">
+                <Info size={12} /> Selecione um jogo acima para habilitar as menções
+              </div>
+            )}
+            <FieldError />
+          </Field>
+
+          <Field error={errors.content?.message} className="md:col-span-2">
+            <FieldLabel>Manuscrito da Teoria</FieldLabel>
+            <FieldControl>
+              <Textarea 
+                placeholder="Descreva suas conexões, evidências e conclusões..." 
+                className="min-h-[450px] bg-zinc-950/60 border-white/10 rounded-[2.5rem] p-8 focus:border-primary/50 text-white leading-relaxed font-medium resize-none text-lg shadow-inner"
+                {...register('content')} 
+              />
+            </FieldControl>
+            <FieldError />
+          </Field>
         </div>
 
-        {/* Título */}
-        <div className="flex flex-col gap-1 w-full">
-           <TextareaAutosize
-             {...register('title')}
-             placeholder="Digite o título da sua teoria..."
-             className="w-full resize-none bg-transparent border-none outline-none focus:ring-0 text-4xl md:text-5xl lg:text-6xl font-black italic tracking-tighter text-white placeholder:text-zinc-800 p-0 m-0 leading-tight"
-           />
-           {errors.title && <p className="text-[10px] text-destructive font-bold uppercase ml-1 mt-2">{errors.title.message}</p>}
+        <div className="flex gap-4 pt-4">
+          <Button
+            type="submit"
+            disabled={isSaving}
+            className="flex-1 h-16 bg-primary hover:bg-primary/80 text-black font-black uppercase text-[12px] tracking-[0.2em] rounded-2xl shadow-2xl shadow-primary/20 transition-all font-sans"
+          >
+            {isSaving ? <Loader2 className="animate-spin" size={20} /> : <><Save size={20} className="mr-2" /> {isEditing ? 'Salvar Mudanças' : 'Publicar no Hub'}</>}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.back()}
+            className="h-16 px-10 border-white/10 bg-zinc-950/40 text-zinc-400 hover:text-white rounded-2xl font-black uppercase text-[12px] tracking-[0.2em] transition-all"
+          >
+            <X size={20} className="mr-2" /> Descartar
+          </Button>
         </div>
-
-        {/* Conteúdo */}
-        <div className="flex flex-col gap-1 w-full flex-1">
-           <TextareaAutosize
-             {...register('content')}
-             minRows={10}
-             placeholder="Escreva livremente sobre as origens, conexões obscuras e segredos esquecidos deste universo..."
-             className="w-full resize-none bg-transparent border-none outline-none focus:ring-0 text-lg md:text-xl font-medium tracking-wide text-zinc-300 placeholder:text-zinc-700 p-0 m-0 leading-relaxed"
-           />
-           {errors.content && <p className="text-[10px] text-destructive font-bold uppercase ml-1 mt-4">{errors.content.message}</p>}
-        </div>
-
-      </main>
+      </form>
     </div>
   )
 }

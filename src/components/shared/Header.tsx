@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
-import { PlusCircle, Search, Compass, LogIn, ShieldCheck } from 'lucide-react'
+import { PlusCircle, Search, Compass, LogIn, ShieldCheck, Library } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState, useRef } from 'react'
 import { usersService } from '@/services/users.service'
@@ -87,6 +88,12 @@ export function Header() {
               <Compass size={14} className="inline mr-2 -mt-1 text-primary" /> Explorar
             </Link>
             <Link 
+              href="/theories" 
+              className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
+            >
+              <Library size={14} className="inline mr-2 -mt-1 text-primary" /> Teorias
+            </Link>
+            <Link 
               href="/wiki" 
               className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
             >
@@ -118,10 +125,21 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div role="button" tabIndex={0} className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-primary-foreground p-px cursor-pointer hover:scale-110 transition-transform outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-                  <div className="w-full h-full bg-zinc-950 rounded-xl flex items-center justify-center text-[10px] font-bold text-white overflow-hidden uppercase">
-                    {user.username?.substring(0, 2) || user.email?.substring(0, 2)}
+                <div role="button" tabIndex={0} className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-primary-foreground p-px cursor-pointer hover:scale-110 transition-transform outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black overflow-hidden relative group/avatar">
+                   <div className="w-full h-full bg-zinc-950 rounded-[11px] flex items-center justify-center text-[10px] font-bold text-white overflow-hidden uppercase relative z-10">
+                    {user.avatarUrl ? (
+                      <Image 
+                        src={user.avatarUrl} 
+                        alt={user.username} 
+                        width={40} 
+                        height={40} 
+                        className="w-full h-full object-cover" 
+                      />
+                    ) : (
+                      user.username?.substring(0, 2) || user.email?.substring(0, 2)
+                    )}
                   </div>
+                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-zinc-950 border-white/10 text-white rounded-xl">
