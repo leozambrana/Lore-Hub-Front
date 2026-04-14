@@ -20,7 +20,7 @@ export function GamesCarousel({ games }: { games: Game[] }) {
         {games.map(game => (
           <CarouselItem key={game.id} className="pl-4 basis-[80%] sm:basis-[45%] md:basis-[30%] lg:basis-[22%]">
             <Link href={`/games/${game.slug}`} className="block">
-               <div className="relative aspect-4/3 rounded-2xl overflow-hidden group border border-white/10 bg-zinc-900 cursor-pointer shadow-xl">
+               <div className="relative aspect-4/3 rounded-2xl overflow-hidden group border border-white/20 bg-zinc-900 cursor-pointer shadow-xl">
                   {/* Image Background */}
                   <Image 
                     src={game.imageUrl || GAME_FALLBACK_IMAGE} 
@@ -34,7 +34,7 @@ export function GamesCarousel({ games }: { games: Game[] }) {
                   
                   {/* Badge */}
                   <div className="absolute top-3 right-3 z-10">
-                     <Badge variant="outline" className="bg-zinc-950/80 backdrop-blur-md text-white border-white/10 hover:bg-zinc-950 text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 whitespace-nowrap">
+                     <Badge variant="outline" className="bg-zinc-950/80 backdrop-blur-md text-white border-white/20 hover:bg-zinc-950 text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 whitespace-nowrap">
                         {game.stats?.theories || 0} Teorias
                      </Badge>
                   </div>
@@ -51,8 +51,9 @@ export function GamesCarousel({ games }: { games: Game[] }) {
         ))}
       </CarouselContent>
       {/* Navigation Buttons (Hidden on small screens) */}
-      <CarouselPrevious className="hidden md:flex -left-6 lg:-left-12 bg-zinc-900 border-white/10 text-white hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-transform h-10 w-10 disabled:opacity-0" />
-      <CarouselNext className="hidden md:flex -right-6 lg:-right-12 bg-zinc-900 border-white/10 text-white hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-transform h-10 w-10 disabled:opacity-0" />
+      <CarouselPrevious className="hidden md:flex -left-6 lg:-left-12 bg-zinc-900 border-white/20 text-white hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-transform h-10 w-10 disabled:opacity-0" />
+      <CarouselNext className="hidden md:flex -right-6 lg:-right-12 bg-zinc-900 border-white/20 text-white hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-transform h-10 w-10 disabled:opacity-0" />
     </Carousel>
   )
 }
+

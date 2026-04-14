@@ -21,7 +21,7 @@ export function HomeFeed() {
   return (
     <div className="w-full">
       <Tabs defaultValue="popular" onValueChange={setActiveTab} className="mb-6">
-        <TabsList className="bg-white/5 border border-white/10">
+        <TabsList className="bg-white/5 border border-white/20">
           <TabsTrigger value="popular" className="text-xs uppercase tracking-widest font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             🔥 Populares
           </TabsTrigger>
@@ -51,3 +51,4 @@ export function HomeFeed() {
     </div>
   )
 }
+

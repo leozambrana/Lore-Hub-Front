@@ -24,7 +24,7 @@ export default async function Home() {
   return (
     <main className="flex-1 flex flex-col items-center">
       {/* Hero Section Slim */}
-      <section className="w-full relative pt-16 pb-12 overflow-hidden border-b border-white/5">
+      <section className="w-full relative pt-16 pb-12 overflow-hidden border-b border-white/20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
         
         <div className="container px-6 mx-auto relative z-10 flex flex-col items-center">
@@ -60,9 +60,10 @@ export default async function Home() {
       </section>
       
       {/* Footer minimal */}
-      <footer className="w-full py-10 text-center text-[10px] text-zinc-800 font-bold uppercase tracking-[0.5em] border-t border-white/5 mt-auto">
+      <footer className="w-full py-10 text-center text-[10px] text-zinc-800 font-bold uppercase tracking-[0.5em] border-t border-white/20 mt-auto">
          LoreHub &bull; Forged with Passion
       </footer>
     </main>
   );
 }
+

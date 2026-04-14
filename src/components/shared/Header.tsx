@@ -66,12 +66,8 @@ export function Header() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-
-
-  console.log('user', user);
-
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-black/60 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-black/60 backdrop-blur-xl">
       <div className="container flex h-20 items-center justify-between px-6 mx-auto">
         <div className="flex items-center gap-10">
           <Link href="/" className="group">
@@ -115,7 +111,7 @@ export function Header() {
             <Link href="/theories/new" passHref>
               <Button 
                 variant="outline" 
-                className="hidden sm:flex h-10 border-white/10 bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-105"
+                className="hidden sm:flex h-10 border-white/20 bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-105"
               >
                 <PlusCircle size={14} className="mr-2" /> Nova Teoria
               </Button>
@@ -142,7 +138,7 @@ export function Header() {
                   <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-zinc-950 border-white/10 text-white rounded-xl">
+              <DropdownMenuContent align="end" className="w-48 bg-zinc-950 border-white/20 text-white rounded-xl">
                 <DropdownMenuLabel className="font-bold text-xs uppercase text-zinc-400">Minha Conta</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem className="cursor-pointer focus:bg-white/10 focus:text-white rounded-lg" asChild>
@@ -173,3 +169,4 @@ export function Header() {
     </header>
   )
 }
+

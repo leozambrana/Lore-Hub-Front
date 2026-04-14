@@ -11,6 +11,11 @@ export interface WikiItem {
   game?: {
     title: string
   }
+  userId?: string
+  user?: {
+    id: string
+    username: string
+  }
   theories?: Array<{
     theoryId: string
     wikiItemId: string

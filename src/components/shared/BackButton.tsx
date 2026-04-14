@@ -31,3 +31,4 @@ export function BackButton({ label = 'Voltar', className }: BackButtonProps) {
     </button>
   )
 }
+

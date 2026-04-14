@@ -10,9 +10,11 @@ import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/shared/Combobox'
 import { AsyncCombobox } from '@/components/shared/AsyncCombobox'
 import { CardGridSkeleton } from '@/components/shared/SkeletonTemplates'
-import { ChevronLeft, ChevronRight, Plus, Library } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, Library, Search } from 'lucide-react'
 import Link from 'next/link'
 import { WikiCategory } from '@/types'
+import { Input } from '@/components/ui/input'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const CATEGORIES: { value: string; label: string }[] = [
   { value: 'ALL', label: 'Todas as Categorias' },
@@ -25,16 +27,20 @@ const CATEGORIES: { value: string; label: string }[] = [
 
 export default function WikiListPage() {
   const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
   const [category, setCategory] = useState<string>('ALL')
   const [gameId, setGameId] = useState<string>('ALL')
   const limit = 12
 
+  const debouncedSearch = useDebounce(search, 400)
+
   const { data, isLoading } = useQuery({
-    queryKey: ['wiki', page, category, gameId],
+    queryKey: ['wiki', page, category, gameId, debouncedSearch],
     queryFn: () =>
       wikiService.getAll({
         page,
         limit,
+        search: debouncedSearch,
         category: category === 'ALL' ? undefined : (category as WikiCategory),
         gameId: gameId === 'ALL' ? undefined : gameId,
       }),
@@ -64,7 +70,23 @@ export default function WikiListPage() {
       </div>
 
       {/* Filters section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 p-6 bg-zinc-950/40 border border-white/5 rounded-3xl backdrop-blur-xl">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 p-6 bg-zinc-950/60 border border-white/20 rounded-3xl backdrop-blur-xl">
+        <div className="space-y-2">
+          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Buscar por nome</label>
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+            <Input 
+              placeholder="Ex: Espada de Gelo..." 
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                setPage(1)
+              }}
+              className="pl-11 h-12 bg-zinc-950/60 border-white/10 rounded-xl text-white placeholder:text-zinc-600 focus:border-primary/50 transition-all"
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Categoria</label>
           <Combobox 
@@ -100,7 +122,7 @@ export default function WikiListPage() {
       ) : (
         <>
           {data?.data.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 bg-zinc-950/20 border-2 border-dashed border-white/5 rounded-[3rem]">
+            <div className="flex flex-col items-center justify-center py-32 bg-zinc-950/20 border-2 border-dashed border-white/20 rounded-[3rem]">
               <Library size={48} className="text-zinc-800 mb-6" />
               <p className="text-zinc-600 font-bold uppercase tracking-[0.3em] text-xs">Nenhum item encontrado nesta categoria.</p>
             </div>
@@ -119,7 +141,7 @@ export default function WikiListPage() {
                 variant="outline"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="w-12 h-12 p-0 border-white/10 bg-zinc-950/40 text-zinc-400 hover:text-white rounded-xl transition-all"
+                className="w-12 h-12 p-0 border-white/20 bg-zinc-950/60 text-zinc-400 hover:text-white rounded-xl transition-all"
               >
                 <ChevronLeft size={20} />
               </Button>
@@ -133,7 +155,7 @@ export default function WikiListPage() {
                     className={`w-12 h-12 text-sm font-black rounded-xl transition-all ${
                       p === page 
                         ? 'bg-primary text-black' 
-                        : 'border-white/10 bg-zinc-950/40 text-zinc-400 hover:text-white'
+                        : 'border-white/20 bg-zinc-950/60 text-zinc-400 hover:text-white'
                     }`}
                   >
                     {p}
@@ -145,7 +167,7 @@ export default function WikiListPage() {
                 variant="outline"
                 disabled={page === data.meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="w-12 h-12 p-0 border-white/10 bg-zinc-950/40 text-zinc-400 hover:text-white rounded-xl transition-all"
+                className="w-12 h-12 p-0 border-white/20 bg-zinc-950/60 text-zinc-400 hover:text-white rounded-xl transition-all"
               >
                 <ChevronRight size={20} />
               </Button>
@@ -156,3 +178,4 @@ export default function WikiListPage() {
     </main>
   )
 }
+

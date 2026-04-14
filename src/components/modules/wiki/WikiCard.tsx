@@ -16,7 +16,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 export function WikiCard({ item }: { item: WikiItem }) {
   return (
     <Link href={`/wiki/${item.id}`}>
-      <Card className="group border-white/5 bg-zinc-950/40 hover:bg-white/5 hover:border-primary/20 transition-all duration-300 overflow-hidden cursor-pointer h-full shadow-2xl">
+      <Card className="group border-white/20 bg-zinc-950/60 hover:bg-white/5 hover:border-primary/20 transition-all duration-300 overflow-hidden cursor-pointer h-full shadow-2xl">
         <div className="relative aspect-4/3 w-full overflow-hidden">
           <Image
             src={item.imageUrl || WIKI_FALLBACK_IMAGE}
@@ -25,7 +25,7 @@ export function WikiCard({ item }: { item: WikiItem }) {
             className="object-cover grayscale-[0.5] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500"
           />
           <div className="absolute top-3 right-3 z-10">
-            <Badge className="bg-zinc-950/80 backdrop-blur-md text-[9px] uppercase font-black tracking-widest px-2 py-1 border-white/10 rounded-lg text-white">
+            <Badge className="bg-zinc-950/80 backdrop-blur-md text-[9px] uppercase font-black tracking-widest px-2 py-1 border-white/20 rounded-lg text-white">
               {CATEGORY_LABELS[item.category] || item.category}
             </Badge>
           </div>
@@ -47,3 +47,4 @@ export function WikiCard({ item }: { item: WikiItem }) {
     </Link>
   )
 }
+

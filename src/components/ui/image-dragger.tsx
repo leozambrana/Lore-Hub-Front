@@ -78,7 +78,7 @@ export function ImageDragger({
       <div 
         className={cn(
           'relative h-48 w-full border-2 border-dashed rounded-3xl transition-all duration-300 flex flex-col items-center justify-center overflow-hidden',
-          dragActive ? 'border-primary bg-primary/5 scale-[0.98]' : 'border-white/10 bg-white/5 hover:border-white/20',
+          dragActive ? 'border-primary bg-primary/5 scale-[0.98]' : 'border-white/20 bg-white/5 hover:border-white/20',
           preview ? 'border-solid border-white/20' : '',
           error ? 'border-destructive animate-shake' : ''
         )}

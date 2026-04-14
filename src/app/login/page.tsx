@@ -86,12 +86,12 @@ export default function LoginPage() {
             </h1>
             <div className="absolute -bottom-1 left-0 w-0 h-1 bg-primary group-hover:w-full transition-all duration-500 rounded-full shadow-[0_0_10px_#fff]" />
           </div>
-          <span className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase bg-white/5 py-1 px-3 border border-white/10 rounded-full backdrop-blur-sm">
+          <span className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase bg-white/5 py-1 px-3 border border-white/20 rounded-full backdrop-blur-sm">
             Central de Teorias e Lore
           </span>
         </div>
 
-        <Card className="relative border-white/5 bg-zinc-950/40 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-inset ring-white/10 overflow-hidden rounded-[2rem]">
+        <Card className="relative border-white/10 bg-zinc-950/60 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-inset ring-white/10 overflow-hidden rounded-[2rem]">
           <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-50" />
           
           <CardHeader className="relative z-10 pt-10 pb-6 text-center space-y-1">
@@ -114,7 +114,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="Seu melhor e-mail"
                   {...register('email')}
-                  className={`h-12 bg-white/5 border-white/10 text-white rounded-2xl focus:ring-primary/20 focus:border-primary transition-all ${errors.email ? 'border-destructive/50' : ''}`}
+                  className={`h-12 bg-white/5 border-white/20 text-white rounded-2xl focus:ring-primary/20 focus:border-primary transition-all ${errors.email ? 'border-destructive/50' : ''}`}
                 />
                 {errors.email && (
                   <p className="text-[11px] font-medium text-destructive mt-1.5 animate-in fade-in-0 slide-in-from-top-1">
@@ -138,7 +138,7 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Sua senha secreta"
                     {...register('password')}
-                    className={`h-12 bg-white/5 border-white/10 text-white rounded-2xl focus:ring-primary/20 focus:border-primary transition-all ${errors.password ? 'border-destructive/50' : ''}`}
+                    className={`h-12 bg-white/5 border-white/20 text-white rounded-2xl focus:ring-primary/20 focus:border-primary transition-all ${errors.password ? 'border-destructive/50' : ''}`}
                   />
                   <button
                     type="button"

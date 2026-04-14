@@ -18,7 +18,7 @@ export function SidebarWidget({ stats }: SidebarProps) {
   return (
     <div className="flex flex-col gap-6 sticky top-24">
       {/* Top Teoricos */}
-      <div className="bg-zinc-950/40 border border-white/5 rounded-xl p-8 shadow-xl">
+      <div className="bg-zinc-950/60 border border-white/20 rounded-xl p-8 shadow-xl">
         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white flex items-center mb-6">
           <Trophy size={14} className="mr-2 text-primary" /> Top Teóricos
         </h3>
@@ -44,7 +44,7 @@ export function SidebarWidget({ stats }: SidebarProps) {
       </div>
 
       {/* System Status */}
-      <div className="bg-zinc-950/40 border border-white/5 rounded-xl p-8 shadow-xl">
+      <div className="bg-zinc-950/60 border border-white/20 rounded-xl p-8 shadow-xl">
         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white flex items-center mb-6">
           <Server size={14} className="mr-2 text-primary" /> Estatísticas
         </h3>
@@ -66,3 +66,4 @@ export function SidebarWidget({ stats }: SidebarProps) {
     </div>
   )
 }
+

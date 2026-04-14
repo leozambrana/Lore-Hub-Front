@@ -13,7 +13,7 @@ interface TheoryListCardProps {
 export function TheoryListCard({ theory }: TheoryListCardProps) {
   return (
     <Link href={`/theories/${theory.id}`} className="group block">
-      <div className="bg-zinc-950/40 border border-white/5 p-6 rounded-[2rem] hover:bg-white/[0.03] hover:border-primary/20 transition-all shadow-2xl relative overflow-hidden flex flex-col md:flex-row gap-6 items-start md:items-center">
+      <div className="bg-zinc-950/60 border border-white/20 p-6 rounded-[2rem] hover:bg-white/[0.03] hover:border-primary/20 transition-all shadow-2xl relative overflow-hidden flex flex-col md:flex-row gap-6 items-start md:items-center">
         
         {/* Indicador de Hover lateral */}
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-500" />
@@ -39,7 +39,7 @@ export function TheoryListCard({ theory }: TheoryListCardProps) {
 
           <div className="flex items-center gap-4 pt-2">
             <div className="flex items-center gap-2">
-              <Avatar className="h-5 w-5 border border-white/10">
+              <Avatar className="h-5 w-5 border border-white/20">
                 <AvatarImage src={theory.user?.avatarUrl || ''} />
                 <AvatarFallback className="bg-zinc-800 text-[8px] font-bold">
                   {theory.user?.username?.substring(0, 2).toUpperCase()}
@@ -63,7 +63,7 @@ export function TheoryListCard({ theory }: TheoryListCardProps) {
           </div>
         </div>
 
-        <div className="hidden md:flex flex-col items-center justify-center p-4 rounded-2xl bg-white/[0.02] border border-white/5 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0 translate-x-4">
+        <div className="hidden md:flex flex-col items-center justify-center p-4 rounded-2xl bg-white/[0.02] border border-white/20 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0 translate-x-4">
            <ArrowRight className="text-primary" size={20} />
            <span className="text-[8px] font-black uppercase tracking-widest text-zinc-600 mt-2">Ler Mais</span>
         </div>
@@ -71,3 +71,4 @@ export function TheoryListCard({ theory }: TheoryListCardProps) {
     </Link>
   )
 }
+

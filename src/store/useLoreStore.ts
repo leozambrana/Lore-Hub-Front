@@ -1,39 +1,50 @@
 import { create } from 'zustand'
-import { Game, User } from '@/types'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import { AuthSlice, createAuthSlice } from './slices/authSlice'
+import { GameSlice, createGameSlice } from './slices/gameSlice'
+import { TheorySlice, createTheorySlice } from './slices/theorySlice'
+import { WikiSlice, createWikiSlice } from './slices/wikiSlice'
+import { UISlice, createUISlice } from './slices/uiSlice'
 
-interface LoreStore {
-  // Estado do Usuário
-  user: User | null
-  setUser: (user: User | null) => void
+// Tipo combinado de todas as fatias
+export type LoreStore = AuthSlice & GameSlice & TheorySlice & WikiSlice & UISlice
 
-  // Cache Global de Franquias (Opcional, mas solicitado para armazenar retornos)
-  games: Game[]
-  setGames: (games: Game[]) => void
+export const useLoreStore = create<LoreStore>()(
+  persist(
+    (...a) => ({
+      ...createAuthSlice(...a),
+      ...createGameSlice(...a),
+      ...createTheorySlice(...a),
+      ...createWikiSlice(...a),
+      ...createUISlice(...a),
 
-  // Franquias Pendentes (para admin)
-  pendingGames: Game[]
-  setPendingGames: (games: Game[]) => void
+      // Ações globais (cross-slice)
+      clearCurrents: () => {
+        const [set] = a
+        set({ currentTheory: null, currentGame: null, comments: [] })
+      },
 
-  // UI State (exemplo: abrir/fechar modais globais)
-  isCreateModalOpen: boolean
-  setCreateModalOpen: (open: boolean) => void
-
-  // Reset do Store (Logout)
-  logout: () => void
-}
-
-export const useLoreStore = create<LoreStore>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-
-  games: [],
-  setGames: (games) => set({ games }),
-
-  pendingGames: [],
-  setPendingGames: (pendingGames) => set({ pendingGames }),
-
-  isCreateModalOpen: false,
-  setCreateModalOpen: (isCreateModalOpen) => set({ isCreateModalOpen }),
-
-  logout: () => set({ user: null, pendingGames: [], isCreateModalOpen: false }),
-}))
+      logout: () => {
+        const [set] = a
+        set({ 
+          user: null, 
+          pendingGames: [], 
+          isCreateModalOpen: false, 
+          isLoading: false,
+          theories: [],
+          currentTheory: null,
+          games: [],
+          wikiItems: []
+        })
+      }
+    }),
+    {
+      name: 'lore-hub-storage', // Nome da chave no localStorage
+      storage: createJSONStorage(() => localStorage),
+      // Opcional: Persistir apenas o usuário e talvez algumas configurações
+      partialize: (state) => ({ 
+        user: state.user 
+      }),
+    }
+  )
+)

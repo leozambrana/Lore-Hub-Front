@@ -50,12 +50,12 @@ export function ExploreHub({ initialData }: ExploreHubProps) {
   return (
     <div className="flex flex-col gap-8 w-full">
       {/* Top Header: Buscar & Admin Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-zinc-950/40 p-6 rounded-2xl border border-white/5 shadow-xl gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-zinc-950/60 p-6 rounded-2xl border border-white/20 shadow-xl gap-4">
          <div className="relative w-full sm:w-96">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 h-4 w-4" />
             <Input 
               placeholder="Buscar universo..."
-              className="pl-12 bg-white/5 border-white/10 rounded-xl focus:border-primary/50 text-white placeholder:text-zinc-600 h-12"
+              className="pl-12 bg-white/5 border-white/20 rounded-xl focus:border-primary/50 text-white placeholder:text-zinc-600 h-12"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -75,7 +75,7 @@ export function ExploreHub({ initialData }: ExploreHubProps) {
           {filteredGames.map(game => (
              <div key={game.id} className="relative group">
                 <Link href={`/games/${game.slug}`} className="block">
-                   <div className="relative aspect-4/3 rounded-2xl overflow-hidden group border border-white/10 bg-zinc-900 cursor-pointer shadow-xl">
+                   <div className="relative aspect-4/3 rounded-2xl overflow-hidden group border border-white/20 bg-zinc-900 cursor-pointer shadow-xl">
                       <Image 
                         src={game.imageUrl || GAME_FALLBACK_IMAGE} 
                         alt={game.title} 
@@ -86,7 +86,7 @@ export function ExploreHub({ initialData }: ExploreHubProps) {
                       <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none" />
                       
                       <div className="absolute top-3 right-3 z-10 pointer-events-none">
-                         <Badge variant="outline" className="bg-zinc-950/80 backdrop-blur-md text-white border-white/10 text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 whitespace-nowrap">
+                         <Badge variant="outline" className="bg-zinc-950/80 backdrop-blur-md text-white border-white/20 text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 whitespace-nowrap">
                             {game.stats?.theories || 0} Teorias
                          </Badge>
                       </div>
@@ -121,7 +121,7 @@ export function ExploreHub({ initialData }: ExploreHubProps) {
              variant="outline"
              onClick={() => setPage(p => Math.max(1, p - 1))}
              disabled={page === 1 || isFetching}
-             className="bg-transparent border-white/10 hover:bg-white/5 text-white"
+             className="bg-transparent border-white/20 hover:bg-white/5 text-white"
            >
              <ChevronLeft className="h-4 w-4 mr-2" /> Anterior
            </Button>
@@ -132,7 +132,7 @@ export function ExploreHub({ initialData }: ExploreHubProps) {
              variant="outline"
              onClick={() => setPage(p => Math.min(lastPage, p + 1))}
              disabled={page === lastPage || isFetching}
-             className="bg-transparent border-white/10 hover:bg-white/5 text-white"
+             className="bg-transparent border-white/20 hover:bg-white/5 text-white"
            >
              Próxima <ChevronRight className="h-4 w-4 ml-2" />
            </Button>
@@ -141,3 +141,4 @@ export function ExploreHub({ initialData }: ExploreHubProps) {
     </div>
   )
 }
+

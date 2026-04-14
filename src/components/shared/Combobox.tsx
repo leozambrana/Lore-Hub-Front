@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
+import { Check, ChevronsUpDown, Loader2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,6 +27,7 @@ interface ComboboxProps {
   emptyMessage?: string
   className?: string
   isLoading?: boolean
+  showClear?: boolean
   onSearchChange?: (search: string) => void
   onLoadMore?: () => void
   hasNextPage?: boolean
@@ -41,6 +42,7 @@ export function Combobox({
   emptyMessage = 'Nenhuma opção encontrada.',
   className,
   isLoading,
+  showClear = true,
   onSearchChange,
   onLoadMore,
   hasNextPage,
@@ -54,17 +56,32 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('w-full justify-between bg-zinc-950/60 border-white/10 text-white rounded-xl h-12', className)}
+          className={cn('w-full justify-between bg-zinc-950/60 border-white/20 text-white rounded-xl h-12 relative group', className)}
         >
           <span className="truncate">
             {value
               ? options.find((option) => option.value === value)?.label || value
               : placeholder}
           </span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <div className="flex items-center gap-2 pr-1">
+            {showClear && value && (
+              <div 
+                role="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onChange('')
+                }}
+                className="p-1 hover:bg-white/10 rounded-md transition-colors text-zinc-500 hover:text-white"
+              >
+                <X className="h-3 w-3" />
+              </div>
+            )}
+            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+          </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0 bg-zinc-950 border-white/10" align="start">
+      <PopoverContent className="w-full p-0 bg-zinc-950 border-white/20" align="start">
         <Command className="bg-transparent" shouldFilter={!onSearchChange}>
           <CommandInput 
             placeholder={searchPlaceholder} 
@@ -124,3 +141,4 @@ export function Combobox({
     </Popover>
   )
 }
+

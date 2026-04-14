@@ -24,8 +24,6 @@ function TimeAgo({ date }: { date: string }) {
   const [text, setText] = useState<string>('')
 
   useEffect(() => {
-    // Usamos um pequeno tempo de espera ou microtask para evitar o aviso de "setState síncrono no efeito"
-    // e calculamos aqui para evitar o erro de "função impura (Date.now) durante o render".
     const calculate = () => {
       const diff = Date.now() - new Date(date).getTime()
       const mins = Math.floor(diff / 60000)
@@ -36,11 +34,7 @@ function TimeAgo({ date }: { date: string }) {
       return new Date(date).toLocaleDateString('pt-BR')
     }
     
-    const timeout = setTimeout(() => {
-      setText(calculate())
-    }, 0)
-
-    return () => clearTimeout(timeout)
+    setText(calculate())
   }, [date])
 
   if (!text) return null
@@ -95,9 +89,8 @@ function CommentItem({
         </div>
       </div>
 
-      {/* Replies */}
       {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-11 mt-3 space-y-3 border-l border-white/5 pl-4">
+        <div className="ml-11 mt-3 space-y-3 border-l border-white/20 pl-4">
           {comment.replies.map((reply) => (
             <div key={reply.id} className="group/reply flex gap-3">
               <Avatar className="h-6 w-6 shrink-0 mt-0.5">
@@ -122,23 +115,19 @@ function CommentItem({
 }
 
 export function CommentsSection({ theoryId }: CommentsSectionProps) {
-  const { user } = useLoreStore()
-  const [comments, setComments] = useState<CommentWithRelations[]>([])
-  const [total, setTotal] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
+  const { user, comments, setLoading, isLoading } = useLoreStore()
   const [newComment, setNewComment] = useState('')
   const [replyTo, setReplyTo] = useState<{ parentId: string; username: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const loadComments = async () => {
+    setLoading(true)
     try {
-      const res = await commentsService.getByTheory(theoryId)
-      setComments(res.data as CommentWithRelations[])
-      setTotal(res.meta.total)
+      await commentsService.getByTheory(theoryId)
     } catch {
-      // silently fail
+      // fail silently
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
@@ -156,6 +145,7 @@ export function CommentsSection({ theoryId }: CommentsSectionProps) {
     if (!content) return
 
     setIsSubmitting(true)
+    setLoading(true)
     try {
       await commentsService.create(theoryId, {
         content,
@@ -173,16 +163,21 @@ export function CommentsSection({ theoryId }: CommentsSectionProps) {
       }
     } finally {
       setIsSubmitting(false)
+      setLoading(false)
     }
   }
 
   const handleDelete = async (commentId: string) => {
+    setLoading(true)
     try {
       await commentsService.remove(theoryId, commentId)
-      await loadComments()
       toast.success('Comentário removido.')
+      // O service já limpa o store, mas o refetch garante a consistência total (ex: total de comments)
+      await loadComments()
     } catch {
       toast.error('Não foi possível remover o comentário.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -192,17 +187,19 @@ export function CommentsSection({ theoryId }: CommentsSectionProps) {
     document.getElementById('comment-input')?.focus()
   }
 
+  const commentsDisplay = (comments as unknown as CommentWithRelations[]) || []
+
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center gap-3">
         <MessageSquare size={16} className="text-primary" />
         <h3 className="text-sm font-black uppercase tracking-widest text-zinc-400">
-          Discussão <span className="text-primary ml-1">({total})</span>
+          Discussão <span className="text-primary ml-1">({commentsDisplay.length})</span>
         </h3>
       </div>
 
-      {/* Input */}
+      {/* Input de comentário */}
       <div className="space-y-3">
         {replyTo && (
           <div className="flex items-center gap-2 text-xs text-zinc-500">
@@ -232,7 +229,7 @@ export function CommentsSection({ theoryId }: CommentsSectionProps) {
               }}
               placeholder={user ? 'Adicione sua perspectiva... (Ctrl+Enter para enviar)' : 'Entre para participar da discussão'}
               disabled={!user || isSubmitting}
-              className="bg-zinc-950/80 border-white/10 text-white placeholder:text-zinc-600 resize-none rounded-xl text-sm min-h-[80px] focus-visible:ring-primary/50"
+              className="bg-zinc-950/80 border-white/20 text-white placeholder:text-zinc-600 resize-none rounded-xl text-sm min-h-[80px] focus-visible:ring-primary/50"
               maxLength={2000}
             />
             <div className="flex justify-between items-center">
@@ -265,8 +262,8 @@ export function CommentsSection({ theoryId }: CommentsSectionProps) {
             </div>
           ))}
         </div>
-      ) : comments.length === 0 ? (
-        <div className="py-12 flex flex-col items-center gap-3 border border-dashed border-white/5 rounded-2xl">
+      ) : commentsDisplay.length === 0 ? (
+        <div className="py-12 flex flex-col items-center gap-3 border border-dashed border-white/20 rounded-2xl">
           <MessageSquare size={24} className="text-zinc-700" />
           <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest">
             Seja o primeiro a comentar
@@ -274,7 +271,7 @@ export function CommentsSection({ theoryId }: CommentsSectionProps) {
         </div>
       ) : (
         <div className="space-y-6">
-          {comments.map((comment) => (
+          {commentsDisplay.map((comment) => (
             <CommentItem
               key={comment.id}
               comment={comment}
@@ -287,3 +284,4 @@ export function CommentsSection({ theoryId }: CommentsSectionProps) {
     </div>
   )
 }
+

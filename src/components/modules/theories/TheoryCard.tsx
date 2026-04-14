@@ -61,7 +61,7 @@ export function TheoryCard({ theory, initialVote }: { theory: Theory; initialVot
   }
 
   return (
-    <Card className="border-white/5 bg-zinc-950/40 backdrop-blur-xl hover:border-primary/30 transition-all group overflow-hidden">
+    <Card className="border-white/20 bg-zinc-950/60 backdrop-blur-xl hover:border-primary/30 transition-all group overflow-hidden">
       <CardHeader className="p-6">
         <div className="flex items-start justify-between">
           <Link href={`/theories/${theory.id}`} className="flex-1 mr-3">
@@ -84,7 +84,7 @@ export function TheoryCard({ theory, initialVote }: { theory: Theory; initialVot
                       <Trash2 size={12} />
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="bg-zinc-950 border-white/10 text-white rounded-3xl">
+                  <AlertDialogContent className="bg-zinc-950 border-white/20 text-white rounded-3xl">
                     <AlertDialogHeader>
                       <AlertDialogTitle className="font-black italic uppercase text-destructive tracking-widest">Apagar Teoria?</AlertDialogTitle>
                       <AlertDialogDescription className="text-zinc-400">
@@ -101,7 +101,7 @@ export function TheoryCard({ theory, initialVote }: { theory: Theory; initialVot
                 </AlertDialog>
               </>
             )}
-            <Badge variant="outline" className="text-[9px] border-white/10 text-zinc-500 uppercase tracking-widest ml-2">
+            <Badge variant="outline" className="text-[9px] border-white/20 text-zinc-500 uppercase tracking-widest ml-2">
               {new Date(theory.createdAt).toLocaleDateString('pt-BR')}
             </Badge>
           </div>
@@ -127,7 +127,7 @@ export function TheoryCard({ theory, initialVote }: { theory: Theory; initialVot
             </div>
           </div>
           
-          <div className="flex items-center gap-4 border-l border-white/10 pl-4 ml-2">
+          <div className="flex items-center gap-4 border-l border-white/20 pl-4 ml-2">
             <div className="flex items-center gap-1.5 text-red-500">
               <Heart size={14} className="fill-red-500" />
               <span className="text-xs font-bold">{optimisticUpvotes}</span>
@@ -153,3 +153,4 @@ export function TheoryCard({ theory, initialVote }: { theory: Theory; initialVot
     </Card>
   )
 }
+

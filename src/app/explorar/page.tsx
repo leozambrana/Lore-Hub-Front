@@ -9,7 +9,7 @@ export default async function ExplorarPage() {
 
   return (
     <main className="flex-1 flex flex-col items-center pb-20">
-      <section className="w-full relative pt-16 pb-12 overflow-hidden border-b border-white/5">
+      <section className="w-full relative pt-16 pb-12 overflow-hidden border-b border-white/20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
         <div className="container px-6 mx-auto relative z-10 flex flex-col items-center">
           <h2 className="text-4xl md:text-5xl font-black italic tracking-tighter text-white uppercase leading-none drop-shadow-2xl mb-4">
@@ -27,3 +27,4 @@ export default async function ExplorarPage() {
     </main>
   );
 }
+

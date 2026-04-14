@@ -84,7 +84,7 @@ export function Combobox({
   )
 }
 
-export function ComboboxInput({ placeholder, className, showClear, value: displayValue }: { placeholder?: string, className?: string, showClear?: boolean, value?: string }) {
+export function ComboboxInput({ placeholder, className, showClear = true, value: displayValue }: { placeholder?: string, className?: string, showClear?: boolean, value?: string }) {
   const { value: contextValue, setValue, open } = useCombobox()
 
   const label = displayValue || contextValue
@@ -95,7 +95,7 @@ export function ComboboxInput({ placeholder, className, showClear, value: displa
         variant="outline"
         role="combobox"
         aria-expanded={open}
-        className={cn('w-full justify-between bg-zinc-950/60 border-white/10 text-white rounded-xl h-12 relative group', className)}
+        className={cn('w-full justify-between bg-zinc-950/60 border-white/20 text-white rounded-xl h-12 relative group', className)}
       >
         <span className="truncate">
           {label || placeholder}
@@ -125,7 +125,7 @@ export function ComboboxContent({ children, className }: { children: React.React
   const { searchTerm, setSearchTerm } = useCombobox()
 
   return (
-    <PopoverContent className={cn("w-[var(--radix-popover-trigger-width)] p-0 bg-zinc-950 border-white/10", className)} align="start">
+    <PopoverContent className={cn("w-[var(--radix-popover-trigger-width)] p-0 bg-zinc-950 border-white/20", className)} align="start">
       <Command className="bg-transparent" shouldFilter={false}>
         <CommandInput 
           placeholder="Buscar..." 
@@ -177,3 +177,4 @@ export function ComboboxItem({ value: itemValue, children, className, onSelect }
     </CommandItem>
   )
 }
+

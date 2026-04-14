@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Theory } from '@/types'
 import { useLoreStore } from '@/store/useLoreStore'
 import { useVote } from '@/hooks/useVote'
@@ -9,6 +9,8 @@ import { CommentsSection } from './CommentsSection'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { InvestigationCanvas } from './investigationCanvas'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +32,7 @@ import {
   MessageSquare,
   Heart,
   Library,
+  ScrollText,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -44,10 +47,15 @@ interface TheoryDetailClientProps {
 }
 
 export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
-  const { user } = useLoreStore()
+  const { user, setCurrentTheory } = useLoreStore()
   const router = useRouter()
   const [isAlertOpen, setIsAlertOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  // Sincroniza a teoria atual no store global
+  useEffect(() => {
+    setCurrentTheory(theory)
+  }, [theory, setCurrentTheory])
 
   const isOwnerOrAdmin = user && (user.id === theory.userId || user.role === 'ADMIN')
 
@@ -55,6 +63,10 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
     theoryId: theory.id,
     initialUpvotes: theory.upvotes,
   })
+
+  const wikiItems = useMemo(() => 
+    theory.wikiReferences?.map(ref => ref.wikiItem) || [], 
+  [theory.wikiReferences])
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -80,7 +92,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
   return (
     <main className="flex-1 flex flex-col bg-black">
 
-      {/* ── Hero Banner com imagem do game ── */}
+      {/* ── Hero Banner ── */}
       <section className="relative h-[45vh] md:h-[55vh] w-full overflow-hidden">
         <Image
           src={gameImageUrl}
@@ -89,13 +101,9 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
           className="object-cover opacity-30 grayscale-[0.4]"
           priority
         />
-        {/* Gradiente forte para preto na base */}
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/70 to-black/10" />
 
-        {/* Conteúdo do hero: breadcrumb no topo, título + autor na base */}
         <div className="container max-w-4xl mx-auto px-6 relative h-full flex flex-col justify-between py-8">
-
-          {/* Topo: voltar + botões de ação */}
           <div className="flex items-center justify-between">
             <BackButton label={theory.game?.title || 'Explorar'} />
 
@@ -105,7 +113,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 px-3 bg-white/10 backdrop-blur-sm text-zinc-300 hover:text-primary hover:bg-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest border border-white/10"
+                    className="h-8 px-3 bg-white/10 backdrop-blur-sm text-zinc-300 hover:text-primary hover:bg-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest border border-white/20"
                   >
                     <Edit2 size={11} className="mr-1.5" /> Editar
                   </Button>
@@ -121,7 +129,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
                       <Trash2 size={11} className="mr-1.5" /> Deletar
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="bg-zinc-950 border-white/10 text-white rounded-3xl">
+                  <AlertDialogContent className="bg-zinc-950 border-white/20 text-white rounded-3xl">
                     <AlertDialogHeader>
                       <AlertDialogTitle className="font-black italic uppercase text-destructive tracking-widest">
                         Apagar Teoria?
@@ -148,7 +156,6 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
             )}
           </div>
 
-          {/* Base: data, título e autor sobre a imagem */}
           <div className="space-y-4">
             <Badge
               variant="outline"
@@ -183,51 +190,85 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
 
       {/* ── Conteúdo principal ── */}
       <div className="container max-w-4xl mx-auto px-6 py-12 space-y-12">
-
-        {/* Corpo da teoria */}
-        <article className="prose prose-invert prose-sm max-w-none overflow-hidden">
-          <div className="text-zinc-300 text-base leading-[1.9] font-medium whitespace-pre-wrap wrap-anywhere">
-            {theory.content}
+        
+        <Tabs defaultValue="read" className="w-full">
+          <div className="flex items-center justify-between mb-8 border-b border-white/20 pb-2">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Fluxo de Análise</h2>
+            <TabsList className="bg-zinc-950/60 border border-white/20 h-10 p-1 rounded-xl">
+              <TabsTrigger 
+                value="read" 
+                className="rounded-lg px-4 text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-black transition-all"
+              >
+                <ScrollText size={12} className="mr-2" /> Narrativa
+              </TabsTrigger>
+              <TabsTrigger 
+                value="canvas" 
+                className="rounded-lg px-4 text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-black transition-all"
+              >
+                <Library size={12} className="mr-2" /> Conexões
+              </TabsTrigger>
+            </TabsList>
           </div>
-        </article>
 
-        {/* Entidades da Wiki Mencionadas */}
-        {theory.wikiReferences && theory.wikiReferences.length > 0 && (
-          <div className="space-y-6 pt-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-              <Library size={12} className="text-primary" />
-              Entidades Mentions
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {theory.wikiReferences.map((ref) => (
-                <Link 
-                  key={ref.wikiItemId} 
-                  href={`/wiki/${ref.wikiItemId}`}
-                  className="flex items-center gap-3 p-3 bg-zinc-950/40 border border-white/5 rounded-2xl hover:border-primary/30 hover:bg-white/5 transition-all group"
-                >
-                  <div className="relative h-12 w-12 rounded-xl overflow-hidden shrink-0 border border-white/10 bg-zinc-900">
-                    <Image
-                      src={ref.wikiItem.imageUrl || '/images/wiki-fallback.jpg'}
-                      alt={ref.wikiItem.name}
-                      fill
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-white truncate group-hover:text-primary transition-colors">
-                      {ref.wikiItem.name}
-                    </p>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600">
-                      {ref.wikiItem.category}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+          <TabsContent value="read" className="mt-0 space-y-12 outline-none">
+            <article className="prose prose-invert prose-sm max-w-none overflow-hidden">
+              <div className="text-zinc-300 text-base leading-[1.9] font-medium whitespace-pre-wrap wrap-anywhere">
+                {theory.content}
+              </div>
+            </article>
+
+            {theory.wikiReferences && theory.wikiReferences.length > 0 && (
+              <div className="space-y-6 pt-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
+                  <Library size={12} className="text-primary" />
+                  Entidades Mentions
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {theory.wikiReferences.map((ref) => (
+                    <Link 
+                      key={ref.wikiItemId} 
+                      href={`/wiki/${ref.wikiItemId}`}
+                      className="flex items-center gap-3 p-3 bg-zinc-950/60 border border-white/20 rounded-2xl hover:border-primary/30 hover:bg-white/5 transition-all group"
+                    >
+                      <div className="relative h-12 w-12 rounded-xl overflow-hidden shrink-0 border border-white/20 bg-zinc-900">
+                        <Image
+                          src={ref.wikiItem.imageUrl || '/images/wiki-fallback.jpg'}
+                          alt={ref.wikiItem.name}
+                          fill
+                          className="object-cover grayscale group-hover:grayscale-0 transition-all"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-white truncate group-hover:text-primary transition-colors">
+                          {ref.wikiItem.name}
+                        </p>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600">
+                          {ref.wikiItem.category}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="canvas" className="mt-0 outline-none">
+            <div className="space-y-6">
+              <div className="flex flex-col gap-2 mb-4">
+                <h3 className="text-xl font-black italic uppercase text-white tracking-tighter">Quadro de Investigação</h3>
+                <p className="text-xs text-zinc-500 font-medium">Visualize como esta teoria se conecta aos elementos do universo.</p>
+              </div>
+              <InvestigationCanvas 
+                theory={theory} 
+                wikiItems={wikiItems} 
+                isEditable={isOwnerOrAdmin}
+              />
             </div>
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
 
-        {/* Evidências Externas / Wiki Ref */}
+        {/* Evidências Externas */}
         {theory.wikiUrl && (
           <div className="space-y-4">
             <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500">
@@ -238,7 +279,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
                 href={theory.wikiUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col md:flex-row bg-zinc-950/40 border border-white/5 rounded-3xl overflow-hidden hover:border-primary/30 transition-all shadow-2xl"
+                className="group flex flex-col md:flex-row bg-zinc-950/60 border border-white/20 rounded-3xl overflow-hidden hover:border-primary/30 transition-all shadow-2xl"
               >
                 {theory.wikiMetadata.image && (
                   <div className="md:w-48 h-32 relative shrink-0 overflow-hidden">
@@ -265,9 +306,6 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
                       {theory.wikiMetadata.description}
                     </p>
                   )}
-                  <p className="text-zinc-700 text-[10px] mt-2 truncate font-mono">
-                    {theory.wikiUrl}
-                  </p>
                 </div>
               </a>
             ) : (
@@ -275,7 +313,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
                 href={theory.wikiUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 rounded-2xl border border-white/5 bg-zinc-950/60 hover:border-primary/30 hover:bg-primary/5 transition-all group w-fit"
+                className="flex items-center gap-3 p-4 rounded-2xl border border-white/20 bg-zinc-950/60 hover:border-primary/30 hover:bg-primary/5 transition-all group w-fit"
               >
                 <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                   <ExternalLink size={14} className="text-primary" />
@@ -284,9 +322,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
                   <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-primary transition-colors">
                     Fonte Wiki
                   </p>
-                  <p className="text-xs text-zinc-400 truncate max-w-xs">
-                    {theory.wikiUrl}
-                  </p>
+                  <p className="text-xs text-zinc-400 truncate max-w-xs">{theory.wikiUrl}</p>
                 </div>
               </a>
             )}
@@ -294,7 +330,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
         )}
 
         {/* Barra de votos */}
-        <div className="flex flex-wrap items-center gap-4 py-6 border-y border-white/5">
+        <div className="flex flex-wrap items-center gap-4 py-6 border-y border-white/20">
           <span className="text-xs font-black uppercase tracking-widest text-zinc-600">
             O que você acha?
           </span>
@@ -304,7 +340,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
               className={`flex items-center justify-center w-12 h-10 rounded-xl border transition-all ${
                 userVote === 'UP'
                   ? 'border-emerald-500 bg-emerald-500/10 text-emerald-500'
-                  : 'border-white/10 bg-white/5 text-zinc-400 hover:border-emerald-500/50 hover:text-emerald-500 hover:bg-emerald-500/5'
+                  : 'border-white/20 bg-white/5 text-zinc-400 hover:border-emerald-500/50 hover:text-emerald-500 hover:bg-emerald-500/5'
               }`}
             >
               <ThumbsUp size={16} className={userVote === 'UP' ? 'fill-emerald-500' : ''} />
@@ -314,7 +350,7 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
               className={`flex items-center justify-center w-12 h-10 rounded-xl border transition-all ${
                 userVote === 'DOWN'
                   ? 'border-red-500 bg-red-500/10 text-red-400'
-                  : 'border-white/10 bg-white/5 text-zinc-400 hover:border-red-500/50 hover:text-red-400 hover:bg-red-500/5'
+                  : 'border-white/20 bg-white/5 text-zinc-400 hover:border-red-500/50 hover:text-red-400 hover:bg-red-500/5'
               }`}
             >
               <ThumbsDown size={16} className={userVote === 'DOWN' ? 'fill-red-500' : ''} />
@@ -338,3 +374,4 @@ export function TheoryDetailClient({ theory }: TheoryDetailClientProps) {
     </main>
   )
 }
+

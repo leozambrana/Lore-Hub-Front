@@ -25,9 +25,10 @@ export default function WikiCreatePage() {
         </div>
       </div>
 
-      <div className="p-8 md:p-12 bg-zinc-950/40 border border-white/5 rounded-[3rem] backdrop-blur-xl shadow-2xl">
+      <div className="p-8 md:p-12 bg-zinc-950/60 border border-white/20 rounded-[3rem] backdrop-blur-xl shadow-2xl">
         <WikiCreateForm />
       </div>
     </main>
   )
 }
+

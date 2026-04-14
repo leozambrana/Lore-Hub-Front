@@ -57,7 +57,7 @@ export default function AdminReviewPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {pendingGames?.map((game) => (
-          <Card key={game.id} className="border-white/5 bg-zinc-950/40 backdrop-blur-xl overflow-hidden group">
+          <Card key={game.id} className="border-white/20 bg-zinc-950/60 backdrop-blur-xl overflow-hidden group">
             <div className="relative aspect-video">
               <Image
                 src={game.imageUrl || GAME_FALLBACK_IMAGE}
@@ -91,7 +91,7 @@ export default function AdminReviewPage() {
                 </Button>
                 <Button 
                    variant="outline"
-                   className="w-12 h-12 border-white/10 hover:border-primary/50 hover:bg-primary/10 rounded-xl flex items-center justify-center p-0 transition-all"
+                   className="w-12 h-12 border-white/20 hover:border-primary/50 hover:bg-primary/10 rounded-xl flex items-center justify-center p-0 transition-all"
                 >
                    <ExternalLink size={16} className="text-zinc-500" />
                 </Button>
@@ -101,7 +101,7 @@ export default function AdminReviewPage() {
         ))}
 
         {(!pendingGames || pendingGames.length === 0) && (
-          <div className="col-span-full py-32 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[3rem] bg-zinc-950/20">
+          <div className="col-span-full py-32 flex flex-col items-center justify-center border-2 border-dashed border-white/20 rounded-[3rem] bg-zinc-950/20">
              <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 text-2xl text-zinc-700 opacity-20">
                 🛡️
              </div>
@@ -112,3 +112,4 @@ export default function AdminReviewPage() {
     </main>
   )
 }
+

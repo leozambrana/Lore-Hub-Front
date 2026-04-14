@@ -8,7 +8,7 @@ export function CardGridSkeleton({ count = 8, className }: { count?: number; cla
   return (
     <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8", className)}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="space-y-4 bg-zinc-950/20 p-4 rounded-[2rem] border border-white/5 h-full">
+        <div key={i} className="space-y-4 bg-zinc-950/20 p-4 rounded-[2rem] border border-white/20 h-full">
           <Skeleton className="aspect-4/3 w-full rounded-2xl" />
           <div className="space-y-3">
             <Skeleton className="h-3 w-1/4 rounded-full" />
@@ -28,7 +28,7 @@ export function FeedSkeleton({ count = 5, className }: { count?: number; classNa
   return (
     <div className={cn("flex flex-col gap-4 w-full", className)}>
       {Array.from({ length: count }).map((_, i) => (
-        <Skeleton key={i} className="h-36 w-full rounded-[2rem] bg-zinc-950/20 border border-white/5" />
+        <Skeleton key={i} className="h-36 w-full rounded-[2rem] bg-zinc-950/20 border border-white/20" />
       ))}
     </div>
   )
@@ -53,7 +53,7 @@ export function ListSkeleton({ count = 4, className }: { count?: number; classNa
 export function DetailSkeleton() {
   return (
     <div className="container max-w-4xl mx-auto px-6 py-12 space-y-8 animate-pulse">
-      <Skeleton className="h-[40vh] w-full rounded-[3rem] bg-zinc-950/40" />
+      <Skeleton className="h-[40vh] w-full rounded-[3rem] bg-zinc-950/60" />
       <div className="space-y-4">
         <Skeleton className="h-12 w-3/4 rounded-2xl" />
         <div className="flex gap-4">
@@ -69,3 +69,4 @@ export function DetailSkeleton() {
     </div>
   )
 }
+

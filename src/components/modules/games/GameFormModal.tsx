@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { Loader2, Plus, Pencil } from 'lucide-react'
@@ -91,33 +90,29 @@ export function GameFormModal({ game }: GameFormModalProps) {
 
     setLoading(true)
     try {
-      let imageUrl = game?.imageUrl || ''
-
-      if (selectedFile) {
-        const filePath = `games/${Date.now()}-${selectedFile.name}`
-        const { error: uploadError } = await supabase.storage
-          .from('game-images')
-          .upload(filePath, selectedFile)
-        if (uploadError) throw uploadError
-        const { data: { publicUrl } } = supabase.storage
-          .from('game-images')
-          .getPublicUrl(filePath)
-        imageUrl = publicUrl
-      }
-
-      const payload = {
+      const payload: Partial<Game> ={
         title: values.title,
         slug: values.slug,
-        imageUrl,
       }
 
-      if (isEdit) {
-        await gamesService.updateGame(game.id, payload)
-        toast.success('Franquia atualizada!')
-      } else {
-        await gamesService.createGame(payload)
-        toast.success('Franquia criada!')
+      if (game?.imageUrl) {
+        payload.imageUrl = game.imageUrl
       }
+
+      let savedGame: Game
+
+      if (isEdit) {
+        savedGame = await gamesService.updateGame(game.id, payload)
+      } else {
+        savedGame = await gamesService.createGame(payload)
+      }
+
+      // Se houver um novo arquivo, faz o upload via Backend (que cuida da organização e limpeza)
+      if (selectedFile) {
+        await gamesService.uploadCover(savedGame.id, selectedFile)
+      }
+
+      toast.success(isEdit ? 'Franquia atualizada!' : 'Franquia criada!')
 
       queryClient.invalidateQueries({ queryKey: ['games'] })
       setOpen(false)
@@ -146,7 +141,7 @@ export function GameFormModal({ game }: GameFormModalProps) {
         )}
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-md bg-zinc-950 border-white/10 text-white rounded-3xl">
+      <DialogContent className="sm:max-w-md bg-zinc-950 border-white/20 text-white rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-black uppercase italic">
             {isEdit ? 'Editar Franquia' : 'Nova Franquia'}
@@ -166,14 +161,14 @@ export function GameFormModal({ game }: GameFormModalProps) {
                 const val = e.target.value
                 setValue('slug', generateSlug(val))
               }}
-              className="bg-white/5 border-white/10 rounded-xl"
+              className="bg-white/5 border-white/20 rounded-xl"
             />
             {errors.title && <p className="text-[10px] text-red-500 font-bold uppercase">{errors.title.message}</p>}
           </div>
 
           <div className="space-y-1">
             <Label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Slug</Label>
-            <Input {...register('slug')} className="bg-white/5 border-white/10 rounded-xl opacity-50" />
+            <Input {...register('slug')} className="bg-white/5 border-white/20 rounded-xl opacity-50" />
             {errors.slug && <p className="text-[10px] text-red-500 font-bold uppercase">{errors.slug.message}</p>}
           </div>
 

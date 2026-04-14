@@ -79,7 +79,7 @@ export function ProfileClient() {
         </p>
       </div>
 
-      <div className="bg-zinc-950/40 border border-white/5 rounded-3xl p-8 backdrop-blur-xl shadow-2xl space-y-8 relative overflow-hidden group">
+      <div className="bg-zinc-950/60 border border-white/20 rounded-3xl p-8 backdrop-blur-xl shadow-2xl space-y-8 relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
           <UserIcon size={120} className="text-primary" />
         </div>
@@ -129,7 +129,7 @@ export function ProfileClient() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Seu codinome no hub..."
-                  className="bg-black/50 border-white/5 h-12 pl-12 rounded-2xl focus:border-primary/50 focus:ring-primary/20 transition-all font-medium"
+                  className="bg-black/50 border-white/20 h-12 pl-12 rounded-2xl focus:border-primary/50 focus:ring-primary/20 transition-all font-medium"
                 />
               </div>
             </div>
@@ -141,7 +141,7 @@ export function ProfileClient() {
               <Input
                 value={user.email}
                 disabled
-                className="bg-zinc-900/30 border-white/5 h-12 rounded-2xl opacity-50 cursor-not-allowed font-mono text-xs select-all"
+                className="bg-zinc-900/30 border-white/20 h-12 rounded-2xl opacity-50 cursor-not-allowed font-mono text-xs select-all"
               />
             </div>
           </div>
@@ -190,3 +190,4 @@ export function ProfileClient() {
     </div>
   )
 }
+

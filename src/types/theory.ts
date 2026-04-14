@@ -24,6 +24,7 @@ export interface Theory {
     comments?: number
     votes?: number
   }
+  canvasData?: any | null
 }
 
 export interface Vote {

@@ -13,6 +13,7 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxGroup,
 } from '@/components/ui/combobox'
 
 interface AsyncComboboxProps<T> {
@@ -38,7 +39,7 @@ export function AsyncCombobox<T extends object>({
   className,
   labelField = 'title' as keyof T,
   valueField = 'id' as keyof T,
-  showClear = false,
+  showClear = true,
 }: AsyncComboboxProps<T>) {
   const [search, setSearch] = React.useState('')
   const debouncedSearch = useDebounce(search, 300)
@@ -96,14 +97,16 @@ export function AsyncCombobox<T extends object>({
             <ComboboxEmpty>{emptyMessage}</ComboboxEmpty>
           )}
           
-          {options.map((option) => (
-            <ComboboxItem
-              key={option[valueField] as string}
-              value={option[valueField] as string}
-            >
-              {option[labelField] as string}
-            </ComboboxItem>
-          ))}
+          <ComboboxGroup>
+            {options.map((option) => (
+              <ComboboxItem
+                key={option[valueField] as string}
+                value={option[valueField] as string}
+              >
+                {option[labelField] as string}
+              </ComboboxItem>
+            ))}
+          </ComboboxGroup>
           
           {hasNextPage && (
             <div className="p-2 pt-0">
@@ -127,3 +130,4 @@ export function AsyncCombobox<T extends object>({
     </Combobox>
   )
 }
+

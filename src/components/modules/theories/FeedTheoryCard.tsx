@@ -9,7 +9,7 @@ export function FeedTheoryCard({ theory }: { theory: Theory }) {
   const commentCount = theory._count?.comments || 0;
 
   return (
-    <Card className="border-white/5 bg-zinc-950/40 hover:bg-white/5 hover:border-white/20 transition-all duration-300 group overflow-hidden">
+    <Card className="border-white/20 bg-zinc-950/60 hover:bg-white/5 hover:border-white/20 transition-all duration-300 group overflow-hidden">
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <Link href={`/theories/${theory.id}`} className="block flex-1 pr-6 cursor-pointer">
@@ -22,14 +22,14 @@ export function FeedTheoryCard({ theory }: { theory: Theory }) {
           </Link>
           <div className="shrink-0 flex flex-col items-end gap-2">
             {theory.game && (
-              <Badge variant="outline" className="text-[10px] border-white/10 text-zinc-500 uppercase tracking-widest hidden sm:inline-flex bg-zinc-950">
+              <Badge variant="outline" className="text-[10px] border-white/20 text-zinc-500 uppercase tracking-widest hidden sm:inline-flex bg-zinc-950">
                 {theory.game.title}
               </Badge>
             )}
           </div>
         </div>
 
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/20">
           <div className="flex items-center gap-3">
             <Avatar className="h-6 w-6">
               <AvatarImage src={theory.user?.avatarUrl || ""} />
@@ -56,3 +56,4 @@ export function FeedTheoryCard({ theory }: { theory: Theory }) {
     </Card>
   )
 }
+

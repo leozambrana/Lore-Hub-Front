@@ -93,7 +93,7 @@ export function MultiSelectTrigger({ placeholder, className, renderItem }: { pla
         variant="outline"
         role="combobox"
         aria-expanded={open}
-        className={cn('w-full min-h-12 h-auto py-2 justify-between bg-zinc-950/60 border-white/10 text-white rounded-xl relative group flex-wrap gap-2', className)}
+        className={cn('w-full min-h-12 h-auto py-2 justify-between bg-zinc-950/60 border-white/20 text-white rounded-xl relative group flex-wrap gap-2', className)}
       >
         <div className="flex flex-wrap gap-1.5 flex-1">
           {value.length === 0 && <span className="text-zinc-500">{placeholder}</span>}
@@ -101,7 +101,7 @@ export function MultiSelectTrigger({ placeholder, className, renderItem }: { pla
              <Badge 
               key={val} 
               variant="secondary" 
-              className="bg-zinc-800/80 text-white border-white/10 hover:bg-zinc-700 transition-colors py-1 pl-2 pr-1 gap-1"
+              className="bg-zinc-800/80 text-white border-white/20 hover:bg-zinc-700 transition-colors py-1 pl-2 pr-1 gap-1"
              >
                <span className="max-w-[150px] truncate">{renderItem ? renderItem(val) : val}</span>
                <div
@@ -128,7 +128,7 @@ export function MultiSelectContent({ children, isLoading, emptyMessage = "Nenhum
   const { searchTerm, setSearchTerm } = useMultiSelect()
 
   return (
-    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-zinc-950 border-white/10" align="start">
+    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-zinc-950 border-white/20" align="start">
       <Command className="bg-transparent" shouldFilter={false}>
         <CommandInput 
           placeholder="Buscar..." 
@@ -172,3 +172,4 @@ export function MultiSelectItem({ value: itemValue, label }: { value: string, la
     </CommandItem>
   )
 }
+

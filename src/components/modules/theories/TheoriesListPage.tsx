@@ -45,16 +45,16 @@ export function TheoriesListPage() {
     <main className="min-h-screen bg-black flex flex-col pt-12">
       {/* Header Seccional */}
       <section className="container max-w-7xl mx-auto px-6 mb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 bg-zinc-950/40 p-10 rounded-[3rem] border border-white/5 backdrop-blur-3xl relative overflow-hidden group">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 bg-zinc-950/60 p-10 rounded-[3rem] border border-white/20 backdrop-blur-3xl relative overflow-hidden group">
           {/* Luzes de fundo sutis */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -mr-48 -mt-48 transition-all group-hover:bg-primary/10" />
           
           <div className="relative z-10 space-y-4">
             <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white uppercase leading-none">
-              Quadro de <span className="text-primary not-italic">Teorias</span>
+              Quadro de <span className="ml-3 text-primary not-italic">Teorias</span>
             </h1>
             <p className="text-zinc-500 max-w-lg text-sm md:text-base font-medium leading-relaxed">
-              Explore os mistérios forjados por narradores em todos os grandes universos catalogados no LoreHub.
+              Explore teorias criadas por usuários em todos os grandes universos catalogados no LoreHub.
             </p>
           </div>
 
@@ -76,7 +76,7 @@ export function TheoriesListPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-primary transition-colors" size={18} />
               <Input 
                 placeholder="Buscar por título ou conteúdo..." 
-                className="h-14 pl-12 bg-zinc-950/60 border-white/5 rounded-2xl focus:border-primary/50 text-white placeholder:text-zinc-600 transition-all shadow-2xl"
+                className="h-14 pl-12 bg-zinc-950/60 border-white/20 rounded-2xl focus:border-primary/50 text-white placeholder:text-zinc-600 transition-all shadow-2xl"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -89,13 +89,13 @@ export function TheoriesListPage() {
                 value={selectedGameId}
                 onChange={setSelectedGameId}
                 placeholder="Filtrar por Jogo"
-                className="h-14 border-white/5 bg-zinc-950/60 shadow-2xl"
+                className="h-14 border-white/20 bg-zinc-950/60 shadow-2xl"
                 showClear
               />
             </div>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-zinc-950/60 p-1.5 rounded-2xl border border-white/5 w-fit shrink-0">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-zinc-950/60 p-1.5 rounded-2xl border border-white/20 w-fit shrink-0">
           <TabsList className="bg-transparent h-11">
             <TabsTrigger value="recent" className="rounded-xl px-6 font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
               <Clock size={12} /> Recentes
@@ -122,7 +122,7 @@ export function TheoriesListPage() {
             ))}
           </div>
         ) : (
-          <div className="py-40 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[4rem] bg-zinc-950/20">
+          <div className="py-40 flex flex-col items-center justify-center border-2 border-dashed border-white/20 rounded-[4rem] bg-zinc-950/20">
             <Search size={48} className="text-zinc-800 mb-6" />
             <h3 className="text-xl font-bold text-zinc-100 mb-2">Nenhuma teoria encontrada</h3>
             <p className="text-zinc-500 text-sm max-w-xs text-center font-medium italic">
@@ -138,7 +138,7 @@ export function TheoriesListPage() {
               variant="outline" 
               disabled={page === 1}
               onClick={() => setPage(prev => prev - 1)}
-              className="h-12 px-6 border-white/5 bg-zinc-950/40 text-zinc-400 hover:text-white rounded-xl uppercase font-black text-[10px] tracking-widest"
+              className="h-12 px-6 border-white/20 bg-zinc-950/60 text-zinc-400 hover:text-white rounded-xl uppercase font-black text-[10px] tracking-widest"
             >
               Anterior
             </Button>
@@ -147,7 +147,7 @@ export function TheoriesListPage() {
               variant="outline" 
               disabled={page === totalPages}
               onClick={() => setPage(prev => prev + 1)}
-              className="h-12 px-6 border-white/5 bg-zinc-950/40 text-zinc-400 hover:text-white rounded-xl uppercase font-black text-[10px] tracking-widest"
+              className="h-12 px-6 border-white/20 bg-zinc-950/60 text-zinc-400 hover:text-white rounded-xl uppercase font-black text-[10px] tracking-widest"
             >
               Próximo
             </Button>
@@ -157,3 +157,4 @@ export function TheoriesListPage() {
     </main>
   )
 }
+

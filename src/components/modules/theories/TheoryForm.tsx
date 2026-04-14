@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Theory, TheoryFormProps } from '@/types'
+import { TheoryFormProps } from '@/types'
 import axios from 'axios'
 import { gamesService } from '@/services/games.service'
 import { theoriesService } from '@/services/theories.service'
@@ -111,14 +111,14 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-zinc-950/40 p-12 rounded-[3.5rem] border border-white/5 backdrop-blur-xl transition-all hover:bg-zinc-950/50">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-zinc-950/60 p-12 rounded-[3.5rem] border border-white/20 backdrop-blur-xl transition-all hover:bg-zinc-950/50">
           
           <Field error={errors.title?.message} className="md:col-span-2">
             <FieldLabel>Título da Investigação</FieldLabel>
             <FieldControl>
               <Input 
                 placeholder="Ex: A verdadeira identidade de Melina..." 
-                className="h-16 bg-zinc-950/60 border-white/10 rounded-2xl focus:border-primary/50 text-white font-bold text-xl px-6"
+                className="h-16 bg-zinc-950/60 border-white/20 rounded-2xl focus:border-primary/50 text-white font-bold text-xl px-6"
                 {...register('title')} 
               />
             </FieldControl>
@@ -149,7 +149,7 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
             <FieldControl>
               <Input 
                 placeholder="https://wiki.fextralife.com/..." 
-                className="h-14 bg-zinc-950/60 border-white/10 rounded-2xl focus:border-primary/50 text-white text-sm px-6"
+                className="h-14 bg-zinc-950/60 border-white/20 rounded-2xl focus:border-primary/50 text-white text-sm px-6"
                 {...register('wikiUrl')} 
               />
             </FieldControl>
@@ -192,7 +192,7 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
             <FieldControl>
               <Textarea 
                 placeholder="Descreva suas conexões, evidências e conclusões..." 
-                className="min-h-[450px] bg-zinc-950/60 border-white/10 rounded-[2.5rem] p-8 focus:border-primary/50 text-white leading-relaxed font-medium resize-none text-lg shadow-inner"
+                className="min-h-[450px] bg-zinc-950/60 border-white/20 rounded-[2.5rem] p-8 focus:border-primary/50 text-white leading-relaxed font-medium resize-none text-lg shadow-inner"
                 {...register('content')} 
               />
             </FieldControl>
@@ -212,7 +212,7 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
             type="button"
             variant="outline"
             onClick={() => router.back()}
-            className="h-16 px-10 border-white/10 bg-zinc-950/40 text-zinc-400 hover:text-white rounded-2xl font-black uppercase text-[12px] tracking-[0.2em] transition-all"
+            className="h-16 px-10 border-white/20 bg-zinc-950/60 text-zinc-400 hover:text-white rounded-2xl font-black uppercase text-[12px] tracking-[0.2em] transition-all"
           >
             <X size={20} className="mr-2" /> Descartar
           </Button>
@@ -221,3 +221,4 @@ export function TheoryForm({ initialData, preselectedGameId }: TheoryFormProps) 
     </div>
   )
 }
+
